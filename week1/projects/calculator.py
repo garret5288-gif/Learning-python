@@ -3,7 +3,7 @@
 operation = input("Enter operation (+, -, *, /): ")
 num1 = float(input('Enter the first number: '))
 num2 = float(input('Enter the second number: '))
-
+# used the round function to limit the result to 2 decimal places
 if operation == '+':
     result = num1 + num2
     print(f"The result of {num1} + {num2} is {round(result, 2)}") 
