@@ -2,7 +2,7 @@
 
 import random
 # imported random module for generating random responses
-question = input("Ask a yes/no question or quit to quit: ")
+# Deleted an unnecessary line that was making the program ask the question twice
 responses = [
     "yes",
     "no",

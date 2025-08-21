@@ -8,29 +8,30 @@ print(line02)
 print(line03)
 print(line02)
 print(line01)
-print('')
+print('') # use blank print statements for spacing
 
 
 
 ## ASCII Art Example
-print('''
+ascii_art = r'''
 ---  -       ----   -     -  -----   ---   ---   ----    -   -
  -   -      -    -  -     -  -        -     -   -    -   -   -
  -   -      -    -  -     -  -----     -   -    -    -   -   -
  -   -      -    -   -   -   -           -      -    -   -   -
 ---  -----   ----     ---    -----       -       ----     ---
-''')
+'''
+print(ascii_art)
 
-print('''
-        
-        ////////////
-                    \\
-    //       --      \\
-   //       ----      \\        
+ascii_art = r'''
+        /////////////
+     //              \\
+    //       --       \\
+   //       ----       \\        
   //       ------      
-  \\       --------     //
-   \\       ------     //
+  \\      --------      //
+   \\      ------      //
     \\                //
      \\   /////////////      
-''')
+'''
+print(ascii_art)
 # Tried making the spear AI logo
