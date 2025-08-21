@@ -1,4 +1,4 @@
-print('''                           
+ascii_art = r'''                           
                                     `$/              
            __                        O$               
        _.-"  )                        $'              
@@ -32,4 +32,5 @@ print('''
                  :   \  /    ;                        
                   \   )/    /                         
                    `-.___.-'
-''')
+'''
+print(ascii_art) # Had to learn that ('''''') would help show the ASCII art correctly

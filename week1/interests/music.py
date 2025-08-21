@@ -1,4 +1,6 @@
-print('''
+# changed to a raw string to avoid issues with backslashes
+
+ascii_art = r'''
   _______       __
  /   ------.   / ._`_
 |  /         ~--~    
@@ -8,4 +10,5 @@ print('''
  \|                   /                       ~    ~
    \       .---.    .
      -----'     ~~''
-''')
+'''
+print(ascii_art)
