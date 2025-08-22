@@ -1,0 +1,26 @@
+what the lines of code are doing in magic8.py
+
+Import random
+imports python's random module to select a random answer
+
+responses =
+creates the list possible answers
+
+quit = false
+sets a marker to control the loop. games goes on until user quits
+
+while not quit
+starts the loop until quit is input
+
+question = input(ask a yes/no question or quit to quit)
+promts user to input question or quit
+
+else:
+if the user doest type "quit" the game continues
+
+responses = random.choice(responses)
+picks random answer from list
+
+print(f'question: {question}\nAnswer: {response}')
+prints user's question and the magic 8 ball's answer
+
