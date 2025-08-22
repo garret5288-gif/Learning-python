@@ -10,19 +10,16 @@ print(line02)
 print(line01)
 print('') # use blank print statements for spacing
 
-
-
-## ASCII Art Example
-ascii_art = r'''
+ascii_art1 = r'''
 ---  -       ----   -     -  -----   ---   ---   ----    -   -
  -   -      -    -  -     -  -        -     -   -    -   -   -
  -   -      -    -  -     -  -----     -   -    -    -   -   -
  -   -      -    -   -   -   -           -      -    -   -   -
 ---  -----   ----     ---    -----       -       ----     ---
 '''
-print(ascii_art)
+print(ascii_art1)
 # Tried making the spear AI logo
-ascii_art = r'''
+ascii_art2 = r'''
      000000000      000000000      000000000.         00.        000000000 
     0.        0     0.       0.    0.                0. 0.       0.       0
      0              0.       0.    0.               0.   0.      0.       0
@@ -32,9 +29,9 @@ ascii_art = r'''
      000000000.     0.             000000000.     0.       0.    0.       0
 
 '''
-print(ascii_art)
+print(ascii_art2)
 
-ascii_art = r'''
+ascii_art3 = r'''
         /////////////
      //              \\
     //       --       \\
@@ -45,9 +42,9 @@ ascii_art = r'''
     \\                //
      \\   /////////////      
 '''
-print(ascii_art)
+print(ascii_art3)
 
-ascii_art = r'''                        
+ascii_art4 = r'''                        
                          22222222222222222222
                     22222222222222222222222222222
                  22222.     222222222222.     222222
@@ -64,4 +61,4 @@ ascii_art = r'''
                     2222                     2222
                        22222222222222222222222
 '''
-print(ascii_art)
+print(ascii_art4)
