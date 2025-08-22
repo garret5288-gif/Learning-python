@@ -9,7 +9,7 @@ responses = [
     "maybe",
     "ask again later"
 ]
-response = random.choice(responses)
+# removed response = random.choice(responses) from this line since it comes after the quit check
 quit = False
 while not quit:
     question = input("Ask a yes/no question or quit to quit: ") #changed answer_1 to question for clarity
