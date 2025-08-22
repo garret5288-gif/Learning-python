@@ -15,4 +15,3 @@ ascii_art = r'''
   -----------------
 '''
 print(ascii_art)
-#test
