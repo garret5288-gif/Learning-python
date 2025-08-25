@@ -5,7 +5,7 @@ while True:
     if color.lower() == "done":
         break
     colors.append(color)
-
+# Print the list of favorite colors.
 print("Your favorite colors are:")
 for c in colors:
     print("- " + c)
