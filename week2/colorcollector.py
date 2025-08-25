@@ -1,5 +1,5 @@
 colors = []
-
+# Collect favorite colors from the user until they type "done".
 while True:
     color = input("Enter a favorite color (or type done to finish): ")
     if color.lower() == "done":

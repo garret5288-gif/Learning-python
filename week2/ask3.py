@@ -1,3 +1,4 @@
+# Ask the user for their name, age, and gender, then print out the responses.
 name = input("What's your name? ")
 print("Hello, " + name + "!")
 
