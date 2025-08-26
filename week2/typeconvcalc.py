@@ -1,4 +1,3 @@
-
 # Prompt the user to enter two numbers and choose an arithmetic operation.
 num1 = float(input("Enter first number: "))  # Convert input to float
 num2 = float(input("Enter second number: "))  # Convert input to float
