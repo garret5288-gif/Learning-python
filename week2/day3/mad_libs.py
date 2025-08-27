@@ -1,0 +1,13 @@
+noun = input("Enter a noun: ").strip().title()
+adjective = input("Enter an adjective: ").strip().lower()
+verb = input("Enter a verb: ").strip().lower()
+place = input("Enter a place: ").strip().title()
+adjective2 = input("Enter another adjective: ").strip().lower()
+noun2 = input("Enter another noun: ").strip().title()
+verb2 = input("Enter another verb: ").strip().lower()
+place2 = input("Enter another place: ").strip().title()
+
+print(f"Long ago, there was a {adjective} {noun} who lived in a {place}.")
+print(f"Sometimes, the {adjective} {noun} would {verb} to the {place2}.")
+print(f"The {noun} met a {adjective2} {noun2} who loved to {verb2}.")
+print(f"{noun} and {noun2} would {verb2} and enjoy each other's company.")
