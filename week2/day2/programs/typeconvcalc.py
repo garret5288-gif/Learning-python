@@ -1,8 +1,22 @@
-# Prompt the user to enter two numbers and choose an arithmetic operation.
-num1 = float(input("Enter first number: "))  # Convert input to float
-num2 = float(input("Enter second number: "))  # Convert input to float
+def get_float(prompt):
+    while True:
+        try:
+            return float(input(prompt))
+        except ValueError:
+            print("Invalid number. Please enter a valid numeric value.")
 
-operation = input("Choose operation (+, -, *, /): ")    
+def get_operation(prompt):
+    valid_ops = {"+", "-", "*", "/"}
+    while True:
+        op = input(prompt)
+        if op in valid_ops:
+            return op
+        else:
+            print("Invalid operation. Please choose one of +, -, *, /.")
+
+num1 = get_float("Enter first number: ")
+num2 = get_float("Enter second number: ")
+operation = get_operation("Choose operation (+, -, *, /): ")
 
 if operation == "+":
     result = num1 + num2
