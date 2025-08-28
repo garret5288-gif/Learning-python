@@ -1,0 +1,4 @@
+variable- a named storage location in a program that
+holds a value such as a number, text, or other data.
+why we need them- they make code flexible and allow us to 
+work with user input, calculations, and results.

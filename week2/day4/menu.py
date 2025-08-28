@@ -14,7 +14,7 @@ if choice == '1':
     print("Hello, World!")
 elif choice == '2':
     print("*****HELP*****")
+    print("Never be afraid to ask for help when learning python!")
 elif choice == '3':
     print("Bonus.")
-else:
-    print("Invalid choice. Please select a valid option.")
+    print("Congratulations on reaching the bonus section!")
