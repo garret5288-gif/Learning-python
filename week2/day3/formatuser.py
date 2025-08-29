@@ -1,9 +1,10 @@
+# Function to get valid user input
 def get_valid_input(prompt, format_func):
-    while True:
+    while True: # Loop until valid input is received
         value = input(prompt).strip()
         if value:
             return format_func(value)
-        else:
+        else: # Check if input is not empty
             print("Input cannot be empty. Please try again.")
 
 user_name = get_valid_input("Enter your username: ", str.lower)
