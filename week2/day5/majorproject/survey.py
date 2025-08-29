@@ -11,7 +11,7 @@ def get_alpha_input(prompt): # Get a non-empty alphabetic string from the user
 
 def get_noempty_input(prompt): # Get a non-empty string from the user
     while True:
-        value = input(prompt).strip()
+        value = input(prompt).strip().title()  
         if value: # Check if input is not empty
             return value
         else:
