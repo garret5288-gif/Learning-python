@@ -1,9 +1,11 @@
+# Positive/Negative Number Checker
+number_input = input("Enter a number: ")
 while True:
     if number_input.lstrip('-').isdigit():  # Allow for negative numbers
         number = int(number_input)
         break
     else:
-        print("Invalid input. Please enter a valid number.")
+        print("Invalid input. Please enter a valid number.") # Prompt for valid input
 
 if number > 0:
     print(f"{number} is positive.")
