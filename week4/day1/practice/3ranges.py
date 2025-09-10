@@ -7,7 +7,7 @@ def odd(i): # Print odd numbers from 1 to i
         if i % 2 != 0:
             print(i, end=" ")
 
-def even(i):
+def even(i): 
     for i in range(1, i + 1):
         if i % 2 == 0: # Print even numbers from 1 to 
             print(i, end=" ")
@@ -18,7 +18,7 @@ if __name__ == "__main__":
         if num == "":
             print("Enter a number")
         elif not num.isdigit():
-            print("Enter a valid number")
+            print("Enter a valid number") 
         elif int(num) <= 0:
             print("Enter a number greater than 0")
         else: # Valid input received
