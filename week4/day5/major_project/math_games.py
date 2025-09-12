@@ -27,8 +27,8 @@ def main(): # Define main function
 def quiz(operation): # Define quiz function
     score = 0
     for i in range(10): # Ask 10 questions
-        a = random.randint(1, 10) # Generate random number between 1 and 10
-        b = random.randint(1, 10)
+        a = random.randint(1, 12) # Generate random number between 1 and 12
+        b = random.randint(1, 12)
         if operation == "addition":
             while True:
                 user_input = input(f"What is {a} + {b}? ") # Prompt user for answer 
