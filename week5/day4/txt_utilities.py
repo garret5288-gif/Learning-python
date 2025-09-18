@@ -42,6 +42,25 @@ def to_lowercase(text: str) -> str:
     '''
     return text.lower()
 
+def count_vowels(text: str) -> int:
+    '''Counts the number of vowels in the text.
+
+    example: count_vowels("Hello") = 2
+    returns: int
+    '''
+    vowels = 'aeiouAEIOU'
+    return sum(1 for char in text if char in vowels)
+
+def count_consonants(text: str) -> int:
+    '''Counts the number of consonants in the text.
+
+    example: count_consonants("Hello") = 3
+    returns: int
+    '''
+    vowels = 'aeiouAEIOU'
+    return sum(1 for char in text if char.isalpha() and char not in vowels)
+
+
 if __name__ == "__main__":
     sample_text = "Hello World! I am here!."
     print("Sample Text:", sample_text)
@@ -50,3 +69,5 @@ if __name__ == "__main__":
     print("Space Count:", space_count(sample_text))
     print("Uppercase:", to_uppercase(sample_text))
     print("Lowercase:", to_lowercase(sample_text))
+    print("Vowel Count:", count_vowels(sample_text))
+    print("Consonant Count:", count_consonants(sample_text))

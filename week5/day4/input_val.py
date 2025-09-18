@@ -40,6 +40,8 @@ def is_alphanumeric(text):
     '''
     return text.isalnum()
 
+
+
 if __name__ == "__main__":
     # Test cases for validation functions
     print(is_number(10))          # True
