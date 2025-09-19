@@ -1,16 +1,13 @@
 # math functions with default parameters and type hints
 import math
 
-def add(a=0, b=0) -> float | int:
-    '''Returns the sum of a and b. Defaults to 0.
-   
-    If only a is provided, returns a + 0.
-    If neither is provided, returns 0 + 0.
-   
-    example: add(3, 6) = 9
+def add(*args) -> float | int:
+    '''Returns the sum of the arguments.
+
+    example: add(3, 6, 3) = 12
     returns: int or float
     '''
-    return a + b
+    return sum(args)
 
 
 def subtract(a=0, b=0) -> float | int:
@@ -170,7 +167,7 @@ def e() -> float:
     '''
     return math.e
 
-
+add(4, 5, 6)  # Example usage of the modified add function
 
 if __name__ == "__main__":
     # simple tests

@@ -1,190 +1,217 @@
-# math functions with default parameters and type hints
 import math
 
-def add(a=0, b=0) -> float | int:
-    '''Returns the sum of a and b. Defaults to 0.
-   
-    If only a is provided, returns a + 0.
-    If neither is provided, returns 0 + 0.
-   
-    example: add(3, 6) = 9
-    returns: int or float
-    '''
+def add(a, b):
+    """
+    Return the sum of a and b.
+
+    Parameters:
+        a (int or float): The first number.
+        b (int or float): The second number.
+
+    Returns:
+        int or float: The sum of a and b.
+
+    Example:
+        add(2, 3) -> 5
+    """
     return a + b
 
+def subtract(a, b):
+    """
+    Return the difference of a and b (a - b).
 
-def subtract(a=0, b=0) -> float | int:
-    '''Returns the difference of a and b. Defaults to 0.
-    
-    If only a is provided, returns a - 0.
-    If neither is provided, returns 0 - 0.
+    Parameters:
+        a (int or float): The first number.
+        b (int or float): The second number.
 
-    example: subtract(9, 3) = 6
-    returns: int or float
-    '''
+    Returns:
+        int or float: The difference of a and b.
+
+    Example:
+        subtract(5, 2) -> 3
+    """
     return a - b
 
+def multiply(a, b):
+    """
+    Return the product of a and b.
 
-def multiply(a=1, b=1) -> float | int:
-    '''Returns the product of a and b. Defaults to 1.
-    
-    If only a is provided, returns a * 1.
-    If neither is provided, returns 1 * 1.
+    Parameters:
+        a (int or float): The first number.
+        b (int or float): The second number.
 
-    example: multiply(9, 5) = 45
-    returns: int or float
-    '''
+    Returns:
+        int or float: The product of a and b.
+
+    Example:
+        multiply(4, 3) -> 12
+    """
     return a * b
 
+def divide(a, b):
+    """
+    Return the quotient of a and b (a / b).
+    Raises ValueError if b is zero.
 
-def divide(a=1, b=1) -> float | int | str:
-    '''Returns the quotient of a and b. Defaults to 1. Returns error if b is 0.
-    
-    If only a is provided, returns a / 1.
-    If neither is provided, returns 1 / 1.
+    Parameters:
+        a (int or float): The numerator.
+        b (int or float): The denominator.
 
-    example: divide(10, 2) = 5.0
-    returns: int, float, or str (error message)
-    '''
-    if b != 0:
-        return a / b
-    else:
-        return "Division by zero error"
+    Returns:
+        float: The result of division.
 
+    Raises:
+        ValueError: If b is zero.
 
-def power(a=2, b=2) -> float | int:
-    '''Returns a raised to the power of b. Defaults to 2^2.
-   
-     If only a is provided, returns a ** 2.
-    If neither is provided, returns 2 ** 2.
+    Example:
+        divide(10, 2) -> 5.0
+    """
+    if b == 0:
+        raise ValueError("Cannot divide by zero.")
+    return a / b
 
-    example: power(4, 3) = 64
-    returns: int or float
-    '''
+def power(a, b):
+    """
+    Return a raised to the power of b (a ** b).
+
+    Parameters:
+        a (int or float): The base number.
+        b (int or float): The exponent.
+
+    Returns:
+        int or float: The result of a ** b.
+
+    Example:
+        power(2, 3) -> 8
+    """
     return a ** b
 
+def square_root(a):
+    """
+    Return the square root of a.
+    Raises ValueError if a is negative.
 
-def square_root(a=0) -> float | int | str:
-    '''Returns the square root of a. Defaults to 0.
-    
-    If only a is provided, returns a ** 0.5.
-    If nothing is provided, returns 0 ** 0.5.
+    Parameters:
+        a (int or float): The number to take the square root of.
 
-    example: square_root(9) = 3.0
-    returns: int, float, or str (error message)
-    '''
-    if a >= 0:
-        return a ** 0.5
-    else:
-        return "Square root of negative number error"
-def logarithm(a=1, base=10) -> float | int | str:
-    '''Returns the logarithm of a with the given base. Defaults to log(1, 10).
-    
-    If only a is provided, returns log(a, 10).
-    If neither is provided, returns log(1, 10).
+    Returns:
+        float: The square root of a.
 
-    example: logarithm(100, 10) = 2.0
-    returns: int, float, or str (error message)
-    '''
-    if a > 0 and base > 1:
-        return math.log(a, base)
-    else:
-        return "Invalid input for logarithm"    
+    Raises:
+        ValueError: If a is negative.
 
-def factorial(n=0) -> int | str:
-    '''Returns the factorial of n. Defaults to 0!.
-    
-    If only n is provided, returns n!.
-    If nothing is provided, returns 0!.
+    Example:
+        square_root(9) -> 3.0
+    """
+    if a < 0:
+        raise ValueError("Cannot take square root of a negative number.")
+    return math.sqrt(a)
 
-    example: factorial(5) = 120
-    returns: int or str (error message)
-    '''
-    if n >= 0:
-        return math.factorial(n)
-    else:
-        return "Invalid input for factorial"
+def logarithm(a, base=math.e):
+    """
+    Return the logarithm of a with the given base (default is natural log).
+    Raises ValueError if a <= 0 or base <= 0 or base == 1.
 
-def sine(angle_rad=0) -> float:
-    '''Returns the sine of the given angle in radians. Defaults to sin(0).
-    
-    If angle_rad is provided, returns sin(angle_rad).
-    If nothing is provided, returns sin(0).
+    Parameters:
+        a (int or float): The number to take the log of.
+        base (int or float): The base of the logarithm (default: math.e).
 
-    example: sine(math.pi/2) = 1.0
-    returns: float
-    '''
+    Returns:
+        float: The logarithm of a to the given base.
+
+    Raises:
+        ValueError: If a <= 0, base <= 0, or base == 1.
+
+    Example:
+        logarithm(100, 10) -> 2.0
+    """
+    if a <= 0:
+        raise ValueError("Logarithm undefined for zero or negative numbers.")
+    if base <= 0 or base == 1:
+        raise ValueError("Base must be positive and not equal to 1.")
+    return math.log(a, base)
+
+def factorial(n):
+    """
+    Return the factorial of n.
+    Raises ValueError if n is negative or not an integer.
+
+    Parameters:
+        n (int): The number to take the factorial of.
+
+    Returns:
+        int: The factorial of n.
+
+    Raises:
+        ValueError: If n is negative or not an integer.
+
+    Example:
+        factorial(5) -> 120
+    """
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("Factorial only defined for non-negative integers.")
+    return math.factorial(n)
+
+def absolute(a):
+    """
+    Return the absolute value of a.
+
+    Parameters:
+        a (int or float): The number to get the absolute value of.
+
+    Returns:
+        int or float: The absolute value of a.
+
+    Example:
+        absolute(-7) -> 7
+    """
+    return abs(a)
+
+def sine(angle_rad):
+    """
+    Return the sine of the given angle in radians.
+
+    Parameters:
+        angle_rad (float): Angle in radians.
+
+    Returns:
+        float: The sine of the angle.
+
+    Example:
+        sine(math.pi/2) -> 1.0
+    """
     return math.sin(angle_rad)
 
-def cosine(angle_rad=0) -> float:
-    '''Returns the cosine of the given angle in radians. Defaults to cos(0).
-    
-    If angle_rad is provided, returns cos(angle_rad).
-    If nothing is provided, returns cos(0).
+def cosine(angle_rad):
+    """
+    Return the cosine of the given angle in radians.
 
-    example: cosine(math.pi) = -1.0
-    returns: float
-    '''
+    Parameters:
+        angle_rad (float): Angle in radians.
+
+    Returns:
+        float: The cosine of the angle.
+
+    Example:
+        cosine(math.pi) -> -1.0
+    """
     return math.cos(angle_rad)
 
-def tangent(angle_rad=0) -> float | str:
-    '''Returns the tangent of the given angle in radians. Defaults to tan(0).
-    
-    If angle_rad is provided, returns tan(angle_rad).
-    If nothing is provided, returns tan(0). Returns error if undefined.
+def tangent(angle_rad):
+    """
+    Return the tangent of the given angle in radians.
+    Raises ValueError if tangent is undefined for the angle.
 
-    example: tangent(math.pi/4) = 1.0
-    returns: float or str (error message)
-    '''
-    try:
-        return math.tan(angle_rad)
-    except ValueError:
-        return "Tangent undefined for this angle"
-    finally:
-        pass
- 
-def absolute(value=0) -> float | int:
-    '''Returns the absolute value of the given number. Defaults to |0|.
-    
-    If value is provided, returns |value|.
-    If nothing is provided, returns |0|.
+    Parameters:
+        angle_rad (float): Angle in radians.
 
-    example: absolute(-10) = 10
-    returns: int or float
-    '''
-    return abs(value)
+    Returns:
+        float: The tangent of the angle.
 
-def pi() -> float:
-    '''Returns the value of π (pi).
-    
-    example: pi() = 3.141592653589793
-    returns: float
-    '''
-    return math.pi
+    Raises:
+        ValueError: If tangent is undefined for the angle.
 
-def e() -> float:
-    '''Returns the value of e (Euler's number).
-    
-    example: e() = 2.718281828459045
-    returns: float
-    '''
-    return math.e
-
-
-
-if __name__ == "__main__":
-    # Example usage
-    print("Addition:", add(3, 6))
-    print("Subtraction:", subtract(9, 3))
-    print("Multiplication:", multiply(9, 5))
-    print("Division:", divide(10, 0))
-    print("Power:", power(4, 3))
-    print("Square Root:", square_root(-8))
-    print("Logarithm:", logarithm(100, 10))
-    print("Factorial:", factorial(5))
-    print("Sine:", sine(math.pi/2))
-    print("Cosine:", cosine(math.pi))
-    print("Tangent:", tangent(math.pi/4))
-    print("Absolute:", absolute(-10))
-    print("Pi:", pi())
-    print("Euler's number:", e())
+    Example:
+        tangent(math.pi/4) -> 1.0
+    """
+    return math.tan(angle_rad)
