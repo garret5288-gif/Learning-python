@@ -22,13 +22,25 @@ def calculate_statistics(grades):
     lowest = min(grades)
     return average, highest, lowest
 
+def letter_grade(score):
+    if score >= 90:
+        return 'A'
+    elif score >= 80:
+        return 'B'
+    elif score >= 70:
+        return 'C'
+    elif score >= 60:
+        return 'D'
+    else:
+        return 'F'
+
 def main():
     grades = collect_grades()
     average, highest, lowest = calculate_statistics(grades)
     if average is not None:
-        print(f"Average: {average:.2f}")
-        print(f"Highest: {highest}")
-        print(f"Lowest: {lowest}")
+        print(f"Average: {letter_grade(average)} ({average:.2f})")
+        print(f"Highest: {letter_grade(highest)} ({highest})")
+        print(f"Lowest: {letter_grade(lowest)} ({lowest})")
     else:
         print("No grades were entered.")
 
