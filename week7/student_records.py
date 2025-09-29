@@ -15,7 +15,11 @@ def check_grades(): # Function to check and display grades
     while True: # Loop to allow multiple queries
         name = input("Enter student name (or 'exit' to quit): ")
         if name.lower() == 'exit': # Exit condition
+            print("Exiting the student records system.")
             break
+        if not name: # Handle empty input
+            print("Invalid input. Please enter a name.")
+            continue
         if name.lower() in grades: # Check if student exists
             print(f"Grades for {name}:") # Display student grades
             for subject, score in grades[name.lower()].items(): # Display each subject and score
