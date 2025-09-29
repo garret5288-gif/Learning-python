@@ -31,4 +31,5 @@ def get_stock(): # Function to look up product stock
         stock = inventory.get(product.lower(), 0) # Get stock or 0 if not found
         print(f"Stock for {product}: {stock}") # Display stock
 
+
 get_stock()

@@ -20,11 +20,12 @@ def check_grades(): # Function to check and display grades
         if not name: # Handle empty input
             print("Invalid input. Please enter a name.")
             continue
-        if name.lower() in grades: # Check if student exists
-            print(f"Grades for {name}:") # Display student grades
-            for subject, score in grades[name.lower()].items(): # Display each subject and score
-                print(f"  {subject}: {score}") # Print subject and score
-        else: # Student not found case
+        student_grades = grades.get(name.lower())
+        if student_grades:
+            print(f"Grades for {name}:")
+            for subject, score in student_grades.items():
+                print(f"  {subject}: {score}")
+        else:
             print("Student not found.")
 
 check_grades()

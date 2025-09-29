@@ -27,9 +27,11 @@ def get_phone_number(): # Function to look up phone numbers
         if not name:
             print("Invalid input. Please enter a name.")
             continue
-        if name.capitalize() in phone_book: # Check if name exists
-            print(f"{name}'s phone number is {phone_book[name.capitalize()]}") # Display phone number
-        else: # Name not found case
+        # Use .get() for safe lookup, capitalize for consistency
+        number = phone_book.get(name.capitalize())
+        if number:
+            print(f"{name.capitalize()}'s phone number is {number}")
+        else:
             print("Name not found in phone book.")
 
 get_phone_number()
