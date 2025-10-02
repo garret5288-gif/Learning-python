@@ -30,7 +30,7 @@ def school_data(school): # Function to display data for the entire school or sel
         print(f"\n{class_name}:") # Print class name
         for student, grades in students.items(): # Iterate through students
             grades_str = ', '.join([f"{subject}: {score}" for subject, score in grades.items()]) # Format grades
-            print(f"  {student}: {grades_str}")
+            print(f"  {student}: {grades_str}") 
 
 def main(): # Main function to run the school data viewer
     print("School Data Viewer")

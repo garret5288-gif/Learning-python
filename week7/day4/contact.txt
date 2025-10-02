@@ -1,0 +1,11 @@
+name,email,phone
+Alice Smith,alice.smith@email.com,555-1234
+Bob Johnson,bob.j@email.com,555-5678
+Charlie Lee,charlie.lee@email.com,555-8765
+Diana King,diana.king@email.com,555-4321
+Eve Adams,eve.adams@email.com,555-2468
+Garret Adkins,garret5288@gmail.com,293-3223
+Frank Miller,frank.miller@email.com,555-1000
+Hannah Scott,hannah.scott@email.com,555-2000
+Ivy Turner,ivy.turner@email.com,555-3331
+
