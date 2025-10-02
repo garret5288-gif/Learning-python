@@ -1,20 +1,17 @@
-# Data Analysis Program
-# Collects numerical data from user and provides analysis options
-
-def collect_data(): # Collect data from user
-    data = [] # Initialize empty list for data
-    while True: # Loop to collect data
+def collect_data():
+    data = []
+    while True:
         entry = input("Enter data (or type 'done' to finish): ")
-        if entry.lower() == 'done' or entry == '': # Check for completion
+        if entry.lower() == 'done' or entry == '':
             break
-        try: # Try to convert input to float
+        try:
             value = float(entry)
             data.append(value)
-        except ValueError: # Handle invalid input
+        except ValueError:
             print("Please enter a valid number.")
-    return data # Return the list of collected data
+    return data
 
-def menu(): # Display menu options
+def menu():
     print("\nData Analysis Menu")
     print("1. View Data")
     print("2. Sum")
@@ -27,21 +24,21 @@ def menu(): # Display menu options
     print("9. Search Value")
     print("10. Exit")
 
-def median(data): # Calculate median of the data
+def median(data):
     sorted_data = sorted(data)
     n = len(sorted_data)
-    if n == 0: # Check for empty data
+    if n == 0:
         return None
-    if n % 2 == 1: # If odd length, return middle element
+    if n % 2 == 1:
         return sorted_data[n // 2]
-    else: # If even length, return average of middle elements
+    else:
         mid1 = sorted_data[n // 2 - 1]
         mid2 = sorted_data[n // 2]
         return (mid1 + mid2) / 2
 
-def main(): # Main function to run the data analysis program
-    data = collect_data() 
-    while True: # Loop to display menu and process user choices
+def main():
+    data = collect_data()
+    while True:
         menu()
         choice = input("Enter your choice: ")
         if choice == "1":
@@ -61,15 +58,12 @@ def main(): # Main function to run the data analysis program
         elif choice == "8":
             print("Sorted Data:", sorted(data))
         elif choice == "9":
-            try: # Search for a value in the data
-                value = float(input("Enter value to search: "))
-                print("Search Result:", "Found" if value in data else "Not Found")
-            except ValueError: # Handle invalid input
-                print("Invalid input. Please enter a valid number.")
+            value = float(input("Enter value to search: "))
+            print("Search Result:", "Found" if value in data else "Not Found")
         elif choice == "10":
             print("Exiting...")
             break
-        else: # Handle invalid menu choice
+        else:
             print("Invalid choice. Please try again.")
 
 main()

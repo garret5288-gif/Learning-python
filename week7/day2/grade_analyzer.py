@@ -27,13 +27,9 @@ def analyze_grades(): # Function to analyze and display grades
             student_grades = students_grades[name.lower()] # Get the student's grades
             total = sum(student_grades.values()) # Calculate total score
             average = total / len(student_grades) # Calculate average score
-            min_score = min(student_grades.values())
-            max_score = max(student_grades.values())
             print(f"Grades for {name.capitalize()}:")
             for subject, score in student_grades.items(): # Display each subject and score
                 print(f"  {subject}: {score}")
-            print(f"  Min score: {min_score}") # Display minimum score
-            print(f"  Max score: {max_score}") # Display maximum score
             print(f"  Average: {average:.2f}") # Display average score
 
 analyze_grades()
