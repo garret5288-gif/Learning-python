@@ -1,0 +1,15 @@
+name,age,grade
+Alice,20,85
+Bob,21,90
+Charlie,19,95
+Diana,22,88
+Eve,20,92
+Frank,23,75
+Grace,21,89
+Hannah,20,91
+Ian,22,87
+Jack,19,93
+Kathy,21,84
+Liam,22,86
+Mia,20,94
+Nina,23,78
