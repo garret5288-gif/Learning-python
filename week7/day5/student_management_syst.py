@@ -3,6 +3,7 @@ from __future__ import annotations # for Python 3.10 compatibility
 
 import json # for JSON handling
 from pathlib import Path # for file paths
+import math # for numeric validation
 from typing import Dict, List # for type hints
 
 DATA_FILE = Path(__file__).with_suffix(".json")  # student_management_syst.json
@@ -42,7 +43,9 @@ def add_grade(db: Dict, name: str, class_name: str, grade: float) -> None: # Add
 	ensure_student(db, name) # ensure student exists
 	classes = db["students"][name]["classes"] # get classes dict
 	classes.setdefault(class_name, []) # ensure class list exists
-	classes[class_name].append(float(grade)) # add the grade
+	g = float(grade)
+	if grade_is_valid(g):
+		classes[class_name].append(g) # add the grade
 
 def add_grades_all_subjects(db: Dict, name: str) -> None:
 	"""Prompt to add multiple grades for each fixed subject in one flow.
@@ -69,7 +72,10 @@ def add_grades_all_subjects(db: Dict, name: str) -> None:
 			except ValueError: # invalid input
 				print(f"  Skipped invalid grade: {t}")
 				continue
-			add_grade(db, name, cls, g) # add the grade
+			if not grade_is_valid(g):
+				print(f"  Skipped out-of-range grade (0-100): {t}")
+				continue
+			add_grade(db, name, cls, g) # add the grade (validated)
 			added += 1
 		print(f"  Added {added} grade(s) to {cls}.")
 
@@ -83,7 +89,10 @@ def update_grade(db: Dict, name: str, class_name: str, index: int, new_grade: fl
         # Validate student, class, and index
 		if class_name not in ALLOWED_CLASSES:
 			return False # invalid class
-		db["students"][name]["classes"][class_name][index] = float(new_grade)
+		g = float(new_grade)
+		if not grade_is_valid(g):
+			return False
+		db["students"][name]["classes"][class_name][index] = g
 		return True # success
 	except (KeyError, IndexError):
 		return False
@@ -121,6 +130,21 @@ def show_student_grades(db: Dict, name: str) -> None:
 			indexed = ", ".join(f"{i}:{g}" for i, g in enumerate(grades))
 			print(f"  {cls}: {indexed}")
 
+def search_students(db: Dict, query: str) -> list[str]: # Search for students by name
+	"""Return lowercase student names that contain query (case-insensitive)."""
+	q = normalize_name(query) 
+	if not q: # empty query
+		return []
+	return sorted([n for n in db.get("students", {}) if q in n])
+
+def print_student_summary(db: Dict, name: str) -> None: # Print summary of a single student
+	classes = db["students"][name]["classes"] # get classes dict
+	print(f"\n{name}")
+	for cls in ALLOWED_CLASSES: # fixed order
+		grades = classes.get(cls, [])
+		avg = round(sum(grades) / len(grades), 2) if grades else 0
+		print(f"  {cls}: grades={grades} avg={avg}")
+
 def normalize_class(value: str) -> str:
 	# Normalize input to Title case and validate later
 	return (value or "").strip().title()
@@ -132,13 +156,13 @@ def normalize_name(value: str) -> str:
 def migrate_names_to_lowercase(db: Dict) -> None:
 	"""Convert all student keys to lowercase, merging classes if duplicates exist."""
 	students = db.get("students", {})
-	if not isinstance(students, dict):
-		db["students"] = {}
+	if not isinstance(students, dict): # invalid structure
+		db["students"] = {} # reset to empty dict
 		return
 	new_map: Dict[str, Dict] = {}
-	for key, val in students.items():
+	for key, val in students.items(): # iterate existing students
 		nk = normalize_name(key)
-		if nk not in new_map:
+		if nk not in new_map: # new student
 			new_map[nk] = val if isinstance(val, dict) else {"classes": {}}
 		else:
 			# merge classes
@@ -167,16 +191,21 @@ def choose_class() -> str | None: # Prompt user to choose a class from allowed l
 	print("Invalid choice.")
 	return None
 
+def grade_is_valid(g: float) -> bool: # Validate grade input
+	"""Validates that a grade is a finite number in the range 0..100 inclusive."""
+	return isinstance(g, (int, float)) and math.isfinite(g) and 0 <= g <= 100
+
 def menu(): # Display menu options
 	print("\nStudent Management System")
 	print("1) Add student")
 	print("2) Add grades to all subjects")
 	print("3) Update a grade")
 	print("4) List students")
-	print("5) Show report")
-	print("6) Save")
-	print("7) Clear all data")
-	print("8) Exit")
+	print("5) Search students (report)")
+	print("6) Show full report")
+	print("7) Save")
+	print("8) Clear all data")
+	print("9) Exit")
 
 def main(): # Main program loop
 	import sys
@@ -202,7 +231,7 @@ def main(): # Main program loop
 			add_grades_all_subjects(db, name)
 		elif choice == "3": # Update a specific grade
 			name = normalize_name(input("Student name: "))
-			if name not in db["students"]: # Check if student exists
+			if name not in db["students"]:
 				print("Student not found.")
 				continue
 			# Show all grades with indices to aid selection
@@ -212,9 +241,9 @@ def main(): # Main program loop
 				continue
 			# Show current selected class grades again with indices
 			sel_grades = db["students"][name]["classes"].get(cls, [])
-			if sel_grades: # show if any grades exist
+			if sel_grades:
 				print("Current indexes for", cls, ":", ", ".join(f"{i}:{g}" for i, g in enumerate(sel_grades)))
-			else: # no grades
+			else:
 				print(f"No grades yet for {cls}.")
 			try: # get index and new grade
 				idx = int(input("Grade index (starting at 0): ").strip())
@@ -222,33 +251,44 @@ def main(): # Main program loop
 			except ValueError: # invalid input
 				print("Invalid input.")
 				continue
+			if not grade_is_valid(new_grade):
+				print("Grade must be between 0 and 100.")
+				continue
 			if update_grade(db, name, cls, idx, new_grade):
-				print("Updated.") # success
-				save_db(db) # auto-save after successful update
-			else: # update failed
+				print("Updated.")
+				save_db(db)
+			else:
 				print("Update failed. Check name/class/index.")
 		elif choice == "4": # List students
 			print("Students:")
 			for s in list_students(db):
 				print("-", s)
-		elif choice == "5": # Show report
+		elif choice == "5": # Search students (report)
+			q = input("Search by name (partial ok): ").strip()
+			matches = search_students(db, q)
+			if not matches:
+				print("No matches.")
+				continue
+			for n in matches:
+				print_student_summary(db, n)
+		elif choice == "6": # Show full report
 			print_report(db)
-		elif choice == "6": # Save database
+		elif choice == "7": # Save database
 			save_db(db)
 			print(f"Saved to {DATA_FILE.name}")
-		elif choice == "7": # Clear all data
+		elif choice == "8": # Clear all data
 			confirm = input("Type YES to confirm clearing all data: ").strip()
 			if confirm == "YES":
 				db["students"] = {}
 				save_db(db)
 				print("All data cleared.")
-			else: # user cancelled
+			else:
 				print("Cancelled.")
-		elif choice == "8": # Exit
+		elif choice == "9": # Exit
 			save_db(db)
 			print("Goodbye.")
-			break 
-		else: # invalid choice
+			break
+		else:
 			print("Invalid choice.")
 
 if __name__ == "__main__":
