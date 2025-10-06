@@ -1,2 +1,6 @@
 Hello, World!
 This is a new file.
+
+Appended line.
+Appended line.
+Appended line.
