@@ -9,7 +9,8 @@ def menu(): # Display menu options
     print("2. View Contacts")
     print("3. Save Contacts to File")
     print("4. Load Contacts from File")
-    print("5. Exit")
+    print("5. Remove Contact")
+    print("6. Exit")
 
 def add_contact(contacts): # Add a new contact
     name = input("Enter name: ").strip()
@@ -55,6 +56,25 @@ def load_contacts(): # Load contacts from JSON file
         print("Error reading contacts file. Starting with empty contact list.\n")
         return []
     
+def remove_contact(contacts): # Remove a contact by number
+    if not contacts:
+        print("\nNo contacts to remove.\n")
+        return
+    view_contacts(contacts)
+    choice = input("Enter the number of the contact to remove (or blank to cancel): ").strip()
+    if not choice:
+        print("Cancelled.\n")
+        return
+    if not choice.isdigit():
+        print("Invalid number.\n")
+        return
+    idx = int(choice)
+    if idx < 1 or idx > len(contacts):
+        print("Number out of range.\n")
+        return
+    removed = contacts.pop(idx - 1)
+    print(f"Removed: {removed.get('name','?')} | {removed.get('phone','?')} | {removed.get('email','?')}\n")
+
 def main(): # Main program loop
     contacts = []
     while True: # Main loop
@@ -69,6 +89,8 @@ def main(): # Main program loop
         elif choice == "4":
             contacts = load_contacts()
         elif choice == "5":
+            remove_contact(contacts)
+        elif choice == "6":
             print("Exiting...\n")
             break
         else:
