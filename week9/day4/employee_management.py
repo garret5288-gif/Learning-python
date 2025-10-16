@@ -23,6 +23,19 @@ class Employee: # Employee class with attributes and methods
     def display_info(self): # display employee details
         print(f"Employee Name: {self.name}, ID: {self.emp_id}, Position: {self.position}")
 
+    # Serialization helpers
+    def to_dict(self):
+        return {"name": self.name, "emp_id": self.emp_id, "position": self.position}
+
+    @staticmethod
+    def save_to_file(employees_list, path: str): # Save list of employees to JSON file
+        try:
+            data = [e.to_dict() for e in employees_list]
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+        except OSError as e:
+            print(f"Failed to save employees: {e}")
+
 def get_employee_by_id(emp_id: int): # find employee by ID
     for e in employees:  # iterate through employee list
         if e.emp_id == emp_id:
@@ -66,12 +79,7 @@ def update_employee(emp_id: int, new_name: Optional[str] = None, new_position: O
 
 
 def save_employees(path: str = DATA_FILE): # Save employee data to JSON file
-    try: # attempt to save employee data
-        data = [{"name": e.name, "emp_id": e.emp_id, "position": e.position} for e in employees]
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-    except OSError as e:
-        print(f"Failed to save employees: {e}")
+    Employee.save_to_file(employees, path)
 
 def load_employees(path: str = DATA_FILE): # Load employee data from JSON file
     global employees # modify global list
