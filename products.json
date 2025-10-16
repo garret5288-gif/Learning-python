@@ -1,0 +1,32 @@
+[
+  {
+    "name": "hamburger",
+    "price": 1.5,
+    "quantity": 20,
+    "category": "meat"
+  },
+  {
+    "name": "apple",
+    "price": 0.45,
+    "quantity": 20,
+    "category": "fruit"
+  },
+  {
+    "name": "carrot",
+    "price": 0.35,
+    "quantity": 30,
+    "category": "vegetable"
+  },
+  {
+    "name": "orange",
+    "price": 0.75,
+    "quantity": 20,
+    "category": "fruit"
+  },
+  {
+    "name": "bacon",
+    "price": 1.75,
+    "quantity": 20,
+    "category": "meat"
+  }
+]
