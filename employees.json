@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Alice",
+    "emp_id": 101,
+    "position": "Developer"
+  },
+  {
+    "name": "Bob",
+    "emp_id": 102,
+    "position": "Designer"
+  },
+  {
+    "name": "Charlie",
+    "emp_id": 103,
+    "position": "Manager"
+  },
+  {
+    "name": "Diana",
+    "emp_id": 104,
+    "position": "Tester"
+  },
+  {
+    "name": "Ethan",
+    "emp_id": 105,
+    "position": "Support"
+  },
+  {
+    "name": "Garret",
+    "emp_id": 106,
+    "position": "Tester"
+  }
+]
