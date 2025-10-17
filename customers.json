@@ -1,0 +1,61 @@
+[
+  {
+    "name": "Garret",
+    "balance": 2100.0,
+    "transactions": [
+      {
+        "type": "deposit",
+        "amount": 1000.0,
+        "balance": 1000.0
+      },
+      {
+        "type": "deposit",
+        "amount": 200.0,
+        "balance": 1200.0
+      },
+      {
+        "type": "withdraw",
+        "amount": 100.0,
+        "balance": 1100.0
+      },
+      {
+        "type": "deposit",
+        "amount": 1000.0,
+        "balance": 2100.0
+      }
+    ]
+  },
+  {
+    "name": "Brandon",
+    "balance": 10000.0,
+    "transactions": [
+      {
+        "type": "deposit",
+        "amount": 10000.0,
+        "balance": 10000.0
+      }
+    ]
+  },
+  {
+    "name": "Wendy",
+    "balance": 100000.0,
+    "transactions": [
+      {
+        "type": "deposit",
+        "amount": 100000.0,
+        "balance": 100000.0
+      }
+    ]
+  },
+  {
+    "name": "Jerry",
+    "balance": 1200.0,
+    "transactions": [
+      {
+        "type": "deposit",
+        "amount": 1200.0,
+        "balance": 1200.0
+      }
+    ]
+  }
+]
