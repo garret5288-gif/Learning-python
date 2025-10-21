@@ -1,0 +1,100 @@
+
+/* Base */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: #0f1115;
+    color: #e8eaf0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans';
+    text-align: center;
+    line-height: 1.6;
+}
+
+h1 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin: 1rem 0 .5rem;
+}
+
+h2 {
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    margin: .75rem 0 .25rem;
+}
+
+p {
+    font-size: 1rem;
+    margin: .5rem 0;
+}
+
+ul {
+    list-style-position: inside;
+    padding: 0;
+    margin: .5rem 0;
+}
+
+a {
+    color: #6aa8ff;
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    text-decoration: underline;
+}
+
+/* Elements */
+hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    margin: 1rem auto;
+    max-width: 900px;
+}
+
+/* Layout helpers */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.stack {
+    display: grid;
+    gap: 16px;
+}
+
+/* Components */
+nav {
+    display: inline-flex;
+    gap: .5rem;
+    padding: .5rem;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .03);
+}
+
+.btn {
+    display: inline-block;
+    padding: .5rem .8rem;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 8px;
+    color: #e8eaf0;
+    text-decoration: none;
+}
+
+.btn:hover {
+    border-color: #6aa8ff;
+    color: #6aa8ff;
+}
+
+.card {
+    background: #171a22;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 12px;
+    padding: 16px;
+}
