@@ -98,3 +98,10 @@ nav {
     border-radius: 12px;
     padding: 16px;
 }
+
+td {
+    border: 1px solid rgba(255, 255, 255, .12);
+    padding: 8px;
+    text-size-adjust: 100%;
+    text-decoration: solid;
+}
