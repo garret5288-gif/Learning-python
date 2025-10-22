@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Contact form for Garret Adkins">
+    <title>Contact</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <main class="container stack">
+        <section class="card center">
+            <h1>Contact Form</h1>
+        </section>
+        <section class="card">
+            <form>
+                <table>
+                    <tr>
+                        <td>
+                            First Name:
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Enter your first name" name="first_name" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Last Name:
+                        </td>
+                        <td>
+                            <input type="text" placeholder="Enter your last name" name="last_name" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Email:
+                        </td>
+                        <td>
+                            <input type="email" name="email" placeholder="Enter your email here" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Message:
+                        </td>
+                        <td>
+                            <textarea name="message" placeholder="Enter your message here" required></textarea>
+                        </td>
+                    </tr>
+
+                </table>
+                <input class="btn" type="submit" value="Submit">
+            </form>
+        </section>
+    </main>
+</body>
+
+</html>

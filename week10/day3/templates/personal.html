@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About Me</title>
+    <meta name="description" content="Personal page about Garret Adkins">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header class="center">
+        <h1>Garret Adkins</h1>
+        <img class="rounded border" src="{{ url_for('static', filename='garret.JPG') }}" alt="Picture of Garret Adkins"
+            width="300">
+    </header>
+
+    <main class="container">
+        <section class="card center">
+            <h2>About Me</h2>
+            <p>Hello, I'm Garret Adkins! I'm a simple man who loves Netflix and video games. I enjoy the little things
+                and
+                learning new skills! You can find me at home reading a book or studying a new skill.</p>
+        </section>
+
+        <section class="card">
+            <h2 class="center">My Hobbies</h2>
+            <ul>
+                <li>Playing video games</li>
+                <li>Watching movies and TV shows</li>
+                <li>Reading books</li>
+                <li>Learning new skills</li>
+            </ul>
+        </section>
+
+        <section class="card center">
+            <h2>Contact Me</h2>
+            <p>If you'd like to get in touch, feel free to email me at <a
+                    href="mailto:garret5288@gmail.com">garret5288@gmail.com</a>.</p>
+        </section>
+    </main>
+</body>
+
+</html>

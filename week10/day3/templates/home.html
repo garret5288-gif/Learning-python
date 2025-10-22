@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta name="description" content="Home page for Garret Adkins" />
+</head>
+
+<body>
+    <main class="container stack">
+        <section class="card">
+            <h1>Home page</h1>
+            <p>Welcome to Garret Adkins' home page!</p>
+            <p>Here you can find information about me and my interests, as well as a sample portfolio.</p>
+        </section>
+        <section class="card">
+            <h2>Current date and time</h2>
+            <p>{{ current_time }}</p>
+        </section>
+    </main>
+</body>
+
+</html>
