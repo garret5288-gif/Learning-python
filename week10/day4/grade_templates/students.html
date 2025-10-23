@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Students — Student Grades{% endblock %}
+{% block header %}Students{% endblock %}
+{% block content %}
+<ul>
+    {% for s in students %}
+    <li>{{ s.name }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

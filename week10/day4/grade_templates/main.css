@@ -1,0 +1,90 @@
+/* Basic, readable defaults */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    color: #222;
+}
+
+/* Layout */
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header,
+footer {
+    padding: 8px 16px;
+}
+
+/* Typography */
+h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin: 1rem 0 .5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin: .75rem 0 .25rem;
+}
+
+p,
+li {
+    font-size: 1.5rem;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+thead th {
+    background: #f5f5f5;
+}
+
+tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* Links and buttons */
+a {
+    color: #0b66d6;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button,
+.btn {
+    display: inline-block;
+    padding: .5rem .8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+}
+
+button:hover,
+.btn:hover {
+    background: #f3f3f3;
+}

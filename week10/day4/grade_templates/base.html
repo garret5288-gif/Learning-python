@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Student grades{% endblock %}</title>
+    <meta name="description" content="A student grade management system.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>{% block header %}Welcome to My Website{% endblock %}</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        <p></p>
+        {% endblock %}
+    </main>
+
+    <footer>
+    </footer>
+</body>
+
+</html>

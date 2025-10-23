@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Grades — Student Grades{% endblock %}
+{% block header %}Student Grades{% endblock %}
+{% block content %}
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Grades</th>
+            <th>Average</th>
+            <th>Letter</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in students %}
+        {% set avg = (s.grades|sum) / (s.grades|length) if s.grades|length > 0 else 0 %}
+        {% set letter = 'A' if avg >= 90 else ('B' if avg >= 80 else ('C' if avg >= 70 else ('D' if avg >= 60 else
+        'F'))) %}
+        <tr>
+            <td>{{ s.name }}</td>
+            <td>{{ s.grades | join(', ') }}</td>
+            <td>{{ '%.2f' % avg }}</td>
+            <td>{{ letter }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
