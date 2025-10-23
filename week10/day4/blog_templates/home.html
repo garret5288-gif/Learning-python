@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block header %}
+    <h1>Welcome to My Personal Blog</h1>
+{% endblock %}
+
+{% block content %}
+    {% for post in posts %}
+            <h2>{{ post.title }} by {{ post.author }}</h2>
+            <p>{{ post.content }}</p>
+            <h3>{{ post.date }}</h3>
+    {% endfor %}
+    <footer> 
+                <p>About me: <a href="{{ url_for('about') }}">About</a></p>
+    </footer>
+{% endblock %}
