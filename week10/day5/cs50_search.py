@@ -1,11 +1,7 @@
 from flask import Flask, render_template
 
 # Configure Flask to load templates and static assets from the cs50_templates folder
-app = Flask(
-	__name__,
-	template_folder="cs50_templates",
-	static_folder="cs50_templates",
-)
+app = Flask(__name__,template_folder="cs50_templates",static_folder="cs50_templates",)
 
 
 @app.route("/")
