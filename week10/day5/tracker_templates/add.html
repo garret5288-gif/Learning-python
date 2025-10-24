@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<h1>Add Student and Grades</h1>
+<form method="post">
+    <label for="name">Name</label><br>
+    <input type="text" id="name" name="name" required><br><br>
+
+    <label for="math">Math grades (comma-separated, 0-100)</label><br>
+    <input type="text" id="math" name="math" placeholder="e.g., 90, 85, 100"><br><br>
+
+    <label for="science">Science grades (comma-separated, 0-100)</label><br>
+    <input type="text" id="science" name="science" placeholder="e.g., 88, 90"><br><br>
+
+    <label for="english">English grades (comma-separated, 0-100)</label><br>
+    <input type="text" id="english" name="english" placeholder="e.g., 95, 92"><br><br>
+
+    {% if error %}
+    <p style="color: crimson;">{{ error }}</p>
+    {% endif %}
+
+    <button type="submit">Add Student</button>
+</form>
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('students_page') }}">Students</a>
+        <a href="{{ url_for('grades_page') }}">Grades</a>
+        <p>&copy; 2025 Student Grade Tracker</p>
+    </footer>
+{% endblock %}

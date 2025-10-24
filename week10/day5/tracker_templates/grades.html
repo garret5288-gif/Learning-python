@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Grades{% endblock %}
+
+{% block content %}
+<h1>Grades</h1>
+<img src="{{ url_for('static', filename='Hero-feature_100-point-Grading_all-grades_illustration_collage_iStock_140269389_1098163324.jpg.webp') }}" alt="Grades" width="400">
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Math</th>
+            <th>Science</th>
+            <th>English</th>
+            <th>Average</th>
+            <th>Letter</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        {% set avg = (
+        (student.math | sum if student.math else 0) +
+        (student.science | sum if student.science else 0) +
+        (student.english | sum if student.english else 0)
+        ) / (
+        ((student.math | length) if student.math else 0) +
+        ((student.science | length) if student.science else 0) +
+        ((student.english | length) if student.english else 0)
+        ) if (
+        ((student.math | length) if student.math else 0) +
+        ((student.science | length) if student.science else 0) +
+        ((student.english | length) if student.english else 0)
+        ) > 0 else 0 %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>
+                {% if student.math %}
+                {% for g in student.math %}{{ g }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% endif %}
+            </td>
+            <td>
+                {% if student.science %}
+                {% for g in student.science %}{{ g }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% endif %}
+            </td>
+            <td>
+                {% if student.english %}
+                {% for g in student.english %}{{ g }}{% if not loop.last %}, {% endif %}{% endfor %}
+                {% endif %}
+            </td>
+            <td>{{ '%.2f' % avg }}</td>
+            <td>{% if avg >= 90 %}A{% elif avg >= 80 %}B{% elif avg >= 70 %}C{% elif avg >= 60 %}D{% else %}F{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Class Avg</th>
+            <th>{{ '%.2f' % class_avg.math }}</th>
+            <th>{{ '%.2f' % class_avg.science }}</th>
+            <th>{{ '%.2f' % class_avg.english }}</th>
+            <th>{{ '%.2f' % class_avg.overall }}</th>
+            <th>—</th>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
+
+{% block footer %}
+    <footer>
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('students_page') }}">Students</a>
+        <a href="{{ url_for('add_page') }}">Add Student</a>
+        <p>&copy; 2025 Student Grade Tracker</p>
+    </footer>
+{% endblock %}
