@@ -1,29 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-<div>
-    <ul class="navbar">
-        <li class="nav-item"><a href="images.html">Images</a></li>
-        <li class="nav-item"><a href="advanced.html">Advanced Search</a></li>
-    </ul>
-</div>
-<div class="center_logo">
-    <img class="logo" src="Google_2015_logo.svg.png" alt="Google Logo">
-</div>
-<div>
-    <form action="https://google.com/search">
-        <input type="text" name="q" placeholder="Search Google" class="search_box">
-        <div class="center_div">
-            <input type="submit" value="Google Search" class="buttons">
-            <input type="button" value="I'm Feeling Lucky" class="buttons">
-        </div>
-    </form>
-</div>
+    <div>
+        <ul class="navbar">
+            <li class="nav-item"><a href="{{ url_for('images') }}">Images</a></li>
+            <li class="nav-item"><a href="{{ url_for('advanced') }}">Advanced Search</a></li>
+        </ul>
+    </div>
+    <div class="center_logo">
+        <img class="logo" src="{{ url_for('static', filename='Google_2015_logo.svg.png') }}" alt="Google Logo">
+    </div>
+    <div>
+        <form action="https://google.com/search">
+            <input type="text" name="q" placeholder="Search Google" class="search_box">
+            <div class="center_div">
+                <input type="submit" value="Google Search" class="buttons">
+                <input type="button" value="I'm Feeling Lucky" class="buttons">
+            </div>
+        </form>
+    </div>
 </body>
+
 </html>
