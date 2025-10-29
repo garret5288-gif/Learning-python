@@ -1,0 +1,45 @@
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    margin: 2rem;
+    text-align: center;
+    background-color: beige;
+}
+
+form {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+input[type=text] {
+    padding: .5rem;
+    width: 16rem;
+    text-align: center;
+}
+
+button {
+    padding: .5rem .75rem;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    margin: 1rem auto;
+    background-color: #ddd;
+    border: 3px solid black;
+}
+
+th,
+td {
+    border: 1px solid #000000;
+    padding: .5rem .75rem;
+    text-align: left;
+}
+
+tfoot td {
+    font-weight: 600;
+}
+
+.error {
+    color: #b00020;
+    margin-top: .5rem;
+}

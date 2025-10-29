@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Forecast</h1>
+<form method="get">
+    <label>City:
+        <input type="text" name="city" value="{{ city or '' }}" placeholder="e.g., Tampa" required />
+    </label>
+    <button type="submit">Get forecast</button>
+</form>
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+{% if results %}
+<h2>{{ results.city_name }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>When</th>
+            <th>Temp (°F)</th>
+            <th>Feels (°F)</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in results.rows %}
+        <tr>
+            <td>{{ row.when }}</td>
+            <td>{{ row.temp }}</td>
+            <td>{{ row.feels }}</td>
+            <td>{{ row.desc }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4">Showing {{ results.count }} of {{ results.total }} slots</td>
+        </tr>
+    </tfoot>
+</table>
+{% endif %}
+{% endblock %}
