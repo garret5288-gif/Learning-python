@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block body %}
+<form class="controls" method="get">
+    <label>Locale
+        <input type="text" name="locale" value="{{ locale or 'us' }}" placeholder="us, gb, ca, in" />
+    </label>
+    <label>Limit
+        <input type="number" name="limit" value="{{ limit or 10 }}" min="1" max="50" />
+    </label>
+    <label>Categories
+        <input type="text" name="categories" value="{{ categories or '' }}" placeholder="e.g., tech,business,sports" />
+    </label>
+    <button type="submit">Fetch</button>
+</form>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+{% if sections %}
+{% for cat, cat_articles in sections.items() %}
+<h2 class="category">{{ cat|capitalize }}</h2>
+{% if cat_articles %}
+<ul class="articles">
+    {% for a in cat_articles %}
+    <li class="article">
+        <h3 class="title">
+            {% if a.url %}<a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.title or 'No Title' }}</a>
+            {% else %}{{ a.title or 'No Title' }}{% endif %}
+        </h3>
+        <div class="meta">
+            <span class="source">{{ a.source or '' }}</span>
+            {% if a.published_at %} · <time>{{ a.published_at }}</time>{% endif %}
+        </div>
+        {% if a.snippet %}<p class="desc">{{ a.snippet }}</p>{% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>(no articles)</p>
+{% endif %}
+{% endfor %}
+{% elif articles %}
+<ul class="articles">
+    {% for a in articles %}
+    <li class="article">
+        <h3 class="title">
+            {% if a.url %}<a href="{{ a.url }}" target="_blank" rel="noopener">{{ a.title or 'No Title' }}</a>
+            {% else %}{{ a.title or 'No Title' }}{% endif %}
+        </h3>
+        <div class="meta">
+            <span class="source">{{ a.source or '' }}</span>
+            {% if a.published_at %} · <time>{{ a.published_at }}</time>{% endif %}
+        </div>
+        {% if a.snippet %}<p class="desc">{{ a.snippet }}</p>{% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+{% if not error %}<p>(no articles)</p>{% endif %}
+{% endif %}
+{% endblock %}

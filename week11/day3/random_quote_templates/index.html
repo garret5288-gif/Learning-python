@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Random Quote</h1>
+<form method="get" class="controls">
+    <label>Tag (optional)
+        <input type="text" name="tag" value="{{ tag or '' }}" placeholder="e.g., wisdom, happiness">
+    </label>
+    <button type="submit">Get Quote</button>
+</form>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+{% if quote %}
+<blockquote class="quote">{{ quote }}</blockquote>
+{% endif %}
+{% endblock %}

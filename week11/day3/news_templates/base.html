@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>News Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Minimal fallback if CSS fails to load */
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            margin: 0;
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <header class="site-header">
+        <h1>Latest News</h1>
+        <nav>
+            <a href="/">Home</a>
+        </nav>
+    </header>
+    <main class="container">
+        {% block body %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <small>Powered by TheNewsAPI</small>
+    </footer>
+</body>
+
+</html>
