@@ -1,11 +1,3 @@
-"""
-Open‑Meteo Data Analyzer
- - Geocode a city name to lat/lon (Open‑Meteo geocoding)
- - Fetch daily weather for a date range
- - Compute summary statistics
- - Save results to JSON
-No API key required.
-"""
 
 import json
 from dataclasses import dataclass

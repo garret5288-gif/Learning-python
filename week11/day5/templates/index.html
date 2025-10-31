@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="grid">
+    <article class="card quote">
+        <h2>Quote of the moment</h2>
+        <p class="quote-text">{{ quote }}</p>
+    </article>
+
+    <article class="card weather">
+        <h2>Current Weather</h2>
+        <p>{{ weather }}</p>
+    </article>
+
+    <article class="card forecast">
+        <h2>Forecast</h2>
+        <ul>
+            {% for item in forecast %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </article>
+
+    <article class="card news">
+        <h2>Top Headlines</h2>
+        <ul>
+            {% for h in headlines %}
+            <li>{{ h }}</li>
+            {% endfor %}
+        </ul>
+    </article>
+</section>
+{% endblock %}
