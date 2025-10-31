@@ -1,16 +1,11 @@
 {
   "current_weather": {
-    "new york|imperial": "53.13\u00b0F, Overcast clouds",
-    "tampa|imperial": "54.21\u00b0F, Scattered clouds"
+    "tampa|imperial": {
+      "value": "58.03\u00b0F, Few clouds",
+      "ts": 1761919265.759032
+    }
   },
   "forecast": {
-    "new york|imperial|limit=5": [
-      "2025-10-31 15:00:00: 52.27\u00b0F, Light rain",
-      "2025-10-31 18:00:00: 54.66\u00b0F, Overcast clouds",
-      "2025-10-31 21:00:00: 53.58\u00b0F, Broken clouds",
-      "2025-11-01 00:00:00: 53.28\u00b0F, Broken clouds",
-      "2025-11-01 03:00:00: 51.75\u00b0F, Few clouds"
-    ],
     "tampa|imperial|limit=5": [
       "2025-10-31 15:00:00: 56.3\u00b0F, Scattered clouds",
       "2025-10-31 18:00:00: 63.81\u00b0F, Scattered clouds",

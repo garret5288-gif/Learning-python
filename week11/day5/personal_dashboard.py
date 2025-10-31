@@ -17,8 +17,8 @@ news_key_path = "news_api_key.txt"
 # --- Simple JSON file cache with TTL (no extra imports) ---
 CACHE_FILE = "weather_cache.json"  # created in current working directory
 # TTLs in seconds
-CURRENT_WEATHER_TTL = 5 * 60   # 5 minutes
-DAILY_FORECAST_TTL = 30 * 60   # 30 minutes
+CURRENT_WEATHER_TTL = 5 * 60        # 5 minutes
+DAILY_FORECAST_TTL = 3 * 60 * 60    # 3 hours
 try:
     import time  # allowed stdlib import
 except Exception:
@@ -110,13 +110,17 @@ def get_current_weather(city: str, api_key: str):
     key = _make_key(city, "imperial")
     cached_entry = cache["current_weather"].get(key)
     if cached_entry:
-        # Backward compat: old cache stored a plain string
+        # Backward compat: old cache stored a plain string; treat as stale so we can migrate
         if isinstance(cached_entry, str):
-            return cached_entry
-        # New format: {"value": str, "ts": float}
-        ts = cached_entry.get("ts")
-        if time and isinstance(ts, (int, float)) and (time.time() - ts) < CURRENT_WEATHER_TTL:
-            return cached_entry.get("value")
+            cached_value = cached_entry
+        else:
+            # New format: {"value": str, "ts": float}
+            ts = cached_entry.get("ts")
+            if time and isinstance(ts, (int, float)) and (time.time() - ts) < CURRENT_WEATHER_TTL:
+                return cached_entry.get("value")
+            cached_value = cached_entry.get("value")
+    else:
+        cached_value = None
 
     # Fetch and cache
     try:
@@ -137,8 +141,8 @@ def get_current_weather(city: str, api_key: str):
         return "Weather data not found."
     except requests.RequestException as e:
         # If API fails but we somehow have cache, return it; else return error
-        if cached_entry:
-            return cached_entry if isinstance(cached_entry, str) else cached_entry.get("value")
+        if cached_value is not None:
+            return cached_value
         return f"Error fetching weather: {e}"
     
 def get_top_headlines(api_key, limit=5, locale="us"):
