@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Quote{% endblock %}
+{% block content %}
+<h2>Get Quote</h2>
+<form method="post">
+    <input name="symbol" placeholder="Symbol" required>
+    <button type="submit">Lookup</button>
+</form>
+{% endblock %}

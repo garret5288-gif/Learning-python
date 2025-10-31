@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Finance{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <div><strong>Finance</strong></div>
+        <nav>
+            {% if session.user_id %}
+            <a href="{{ url_for('index') }}">Portfolio</a>
+            <a href="{{ url_for('quote') }}">Quote</a>
+            <a href="{{ url_for('buy') }}">Buy</a>
+            <a href="{{ url_for('sell') }}">Sell</a>
+            <a href="{{ url_for('history') }}">History</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <div>&copy; {{ 2025 }}</div>
+    </footer>
+</body>
+
+</html>

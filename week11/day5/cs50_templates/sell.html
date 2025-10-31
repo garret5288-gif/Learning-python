@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Sell{% endblock %}
+{% block content %}
+<h2>Sell</h2>
+<form method="post">
+    <select name="symbol" required>
+        {% for row in owned %}
+        <option value="{{ row.symbol }}">{{ row.symbol }} ({{ row.total_shares }})</option>
+        {% endfor %}
+    </select>
+    <input name="shares" type="number" min="1" placeholder="Shares" required>
+    <button type="submit">Sell</button>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<h2>History</h2>
+<table>
+    <tr>
+        <th>Symbol</th>
+        <th>Shares</th>
+        <th>Price</th>
+        <th>When</th>
+    </tr>
+    {% for row in rows %}
+    <tr>
+        <td>{{ row.symbol }}</td>
+        <td>{{ row.shares }}</td>
+        <td>${{ '%.2f'|format(row.price) }}</td>
+        <td>{{ row.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
