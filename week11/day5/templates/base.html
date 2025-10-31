@@ -11,7 +11,8 @@
 
 <body>
     <header class="site-header">
-        <div class="container">
+        <div class="container header-inner">
+            <img class="avatar" src="{{ url_for('static', filename='garret.jpg') }}" alt="Garret" />
             <h1 class="site-title">{% block header %}Personal Dashboard{% endblock %}</h1>
         </div>
     </header>

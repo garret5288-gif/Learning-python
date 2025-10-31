@@ -1,16 +1,10 @@
 :root {
     --bg: #0f172a;
-    /* slate-900 */
     --panel: #111827;
-    /* gray-900 */
     --card: #1f2937;
-    /* gray-800 */
     --muted: #9ca3af;
-    /* gray-400 */
     --text: #e5e7eb;
-    /* gray-200 */
     --accent: #60a5fa;
-    /* blue-400 */
 }
 
 * {
@@ -38,12 +32,30 @@ body {
     border-bottom: 1px solid #1f2937;
     background: rgba(17, 24, 39, 0.7);
     backdrop-filter: blur(6px);
+    text-align: center;
 }
 
 .site-title {
     margin: 0;
     padding: 18px 0;
     font-size: 24px;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #243040;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .site-footer {
@@ -53,6 +65,7 @@ body {
 
 .site-footer p {
     color: var(--muted);
+    text-align: center;
 }
 
 .grid {
