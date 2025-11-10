@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ step.title }}{% endblock %}
+{% block content %}
+<h1>{{ step.title }}</h1>
+<form method="post">
+    {% for f in step.fields %}
+    <div class="row">
+        <label for="{{ f.name }}">{{ f.label }} {% if f.required %}*{% endif %}</label>
+        <input id="{{ f.name }}" name="{{ f.name }}" value="{{ values[f.name] }}" />
+    </div>
+    {% endfor %}
+    <div class="row">
+        {% if n > 1 %}<button name="prev" value="1">Previous</button>{% endif %}
+        <button type="submit">Next</button>
+        <button name="cancel" value="1">Cancel</button>
+    </div>
+</form>
+{% endblock %}

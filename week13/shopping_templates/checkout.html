@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<h1>Checkout Complete</h1>
+{% if items %}
+<p>You purchased:</p>
+<ul>
+    {% for it in items %}
+    <li>{{ it.qty }} × {{ it.name }} @ ${{ '%.2f'|format(it.price) }} = ${{ '%.2f'|format(it.line_total) }}</li>
+    {% endfor %}
+</ul>
+<p><strong>Total:</strong> ${{ '%.2f'|format(total) }}</p>
+{% else %}
+<p>No items in this order.</p>
+{% endif %}
+<p><a href="{{ url_for('catalog') }}">Back to catalog</a></p>
+{% endblock %}

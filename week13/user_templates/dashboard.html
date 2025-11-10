@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p>Welcome, <strong>{{ username }}</strong>.</p>
+<p>See <a href="{{ url_for('list_users') }}">all users</a>.</p>
+{% endblock %}

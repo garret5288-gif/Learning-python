@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Shop{% endblock %}</title>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            margin: 1.5rem;
+        }
+
+        nav a {
+            margin-right: .75rem;
+            text-decoration: none;
+        }
+
+        nav {
+            margin-bottom: 1rem;
+        }
+
+        .flash {
+            background: #f3f4f6;
+            padding: .5rem .75rem;
+            border-radius: 4px;
+            margin: .4rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="{{ url_for('catalog') }}">Products</a>
+        <a href="{{ url_for('view_cart') }}">Cart</a>
+        <a href="{{ url_for('checkout') }}">Checkout</a>
+    </nav>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endif %}
+    {% endwith %}
+    <main class="container stack">
+        {% block content %}
+        <p></p>
+        {% endblock %}
+    </main>
+</body>
+
+</html>

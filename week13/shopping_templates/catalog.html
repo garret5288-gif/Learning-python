@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Catalog{% endblock %}
+{% block content %}
+<h1>Products</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th class="right">Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.name if p.name else p['name'] }}</td>
+            <td class="right price">${{ '%.2f'|format(p.price if p.price is defined else p['price']) }}</td>
+            <td>
+                <form method="post" action="{{ url_for('add_to_cart', item_id=p.id if p.id is defined else p['id']) }}">
+                    <button type="submit">Add</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

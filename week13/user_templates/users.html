@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Users{% endblock %}
+{% block content %}
+<h1>Users</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Created</th>
+            <th>Last Login</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u, e, c, l in rows %}
+        <tr>
+            <td>{{ u }}</td>
+            <td>{{ e }}</td>
+            <td>{{ c }}</td>
+            <td>{{ l if l else '—' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
