@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Admin - Products{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content: space-between; align-items: baseline;">
+    <h2>Inventory</h2>
+    <a class="btn primary" href="{{ url_for('add_product') }}">Add Product</a>
+</div>
+{% if not products %}
+<p>No products yet.</p>
+{% else %}
+<table style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Name</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Price</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Stock</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td style="padding:6px;">{{ p['name'] }}</td>
+            <td style="padding:6px;">${{ '%.2f'|format(p['price']) }}</td>
+            <td style="padding:6px;">{{ p['stock'] }}</td>
+            <td style="padding:6px;">
+                <a class="btn" href="{{ url_for('edit_product', product_id=p['id']) }}">Edit</a>
+                <form method="post" action="{{ url_for('stock_adjust', product_id=p['id']) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="inc" />
+                    <input type="number" name="amount" value="1" style="width:60px" />
+                    <button class="btn" type="submit">+ Stock</button>
+                </form>
+                <form method="post" action="{{ url_for('stock_adjust', product_id=p['id']) }}" style="display:inline;">
+                    <input type="hidden" name="action" value="dec" />
+                    <input type="number" name="amount" value="1" style="width:60px" />
+                    <button class="btn" type="submit">- Stock</button>
+                </form>
+                <form method="post" action="{{ url_for('delete_product', product_id=p['id']) }}" style="display:inline;"
+                    onsubmit="return confirm('Delete this product?');">
+                    <button class="btn danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}Auth Demo{% endblock %}</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+            margin: 0;
+        }
+
+        header {
+            background: #111827;
+            color: #fff;
+            padding: 12px 16px;
+        }
+
+        header a {
+            color: #93c5fd;
+            text-decoration: none;
+            margin-right: 12px;
+        }
+
+        main {
+            max-width: 760px;
+            margin: 24px auto;
+            padding: 0 16px;
+        }
+
+        .container {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: #f9fafb;
+            color: #111827;
+            text-decoration: none;
+        }
+
+        .btn.primary {
+            background: #2563eb;
+            color: #fff;
+            border-color: #1d4ed8;
+        }
+
+        .flash {
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin: 8px 0;
+        }
+
+        .flash.success {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .flash.error {
+            background: #fef2f2;
+            color: #7f1d1d;
+            border: 1px solid #fecaca;
+        }
+
+        label {
+            display: block;
+            margin: 8px 0 4px;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('register') }}">Register</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('request_reset') }}">Reset Password</a>
+            {% if session.get('user_id') %}
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Catalog{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content: space-between; align-items: baseline;">
+    <h2>Catalog</h2>
+</div>
+{% if not products %}
+<p>No products yet.</p>
+{% else %}
+<div class="grid">
+    {% for p in products %}
+    <div class="card">
+        <h3 style="margin: 0 0 6px 0;">{{ p['name'] }}</h3>
+        <div style="color:#6b7280;">${{ '%.2f'|format(p['price']) }} • Stock: {{ p['stock'] }}</div>
+        <p style="margin-top:8px;">{{ p['description'][:120] }}{% if p['description']|length > 120 %}...{% endif %}</p>
+        <a class="btn" href="{{ url_for('view_product', product_id=p['id']) }}">View</a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

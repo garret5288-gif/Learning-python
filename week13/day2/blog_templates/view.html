@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p style="color:#6b7280;">by {{ post.author }} • created {{ post.created_at }}{% if post.updated_at %} • updated {{
+    post.updated_at }}{% endif %}</p>
+<article>
+    <p style="white-space: pre-wrap;">{{ post.content }}</p>
+</article>
+<div class="row" style="margin-top: 16px;">
+    <a class="btn" href="{{ url_for('edit', post_id=post.id) }}">Edit</a>
+    <form class="inline" method="post" action="{{ url_for('remove', post_id=post.id) }}"
+        onsubmit="return confirm('Delete this post?');">
+        <button class="btn danger" type="submit">Delete</button>
+    </form>
+    <a class="btn" href="{{ url_for('index') }}">Back</a>
+</div>
+{% endblock %}

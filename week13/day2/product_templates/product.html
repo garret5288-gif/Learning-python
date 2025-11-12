@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}{{ product['name'] }}{% endblock %}
+{% block content %}
+<h2>{{ product['name'] }}</h2>
+<div style="color:#6b7280;">${{ '%.2f'|format(product['price']) }} • Stock: {{ product['stock'] }}</div>
+<p style="white-space: pre-wrap; margin-top: 8px;">{{ product['description'] }}</p>
+<a class="btn" href="{{ url_for('catalog') }}">Back to catalog</a>
+{% endblock %}
