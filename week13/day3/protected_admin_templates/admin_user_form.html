@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Add User{% endblock %}
+{% block content %}
+<h2>Add User</h2>
+<form method="post">
+    <label>Username</label>
+    <input type="text" name="username" required />
+
+    <label>Email</label>
+    <input type="email" name="email" required />
+
+    <div style="margin-top:10px;">
+        <button class="btn primary" type="submit">Create</button>
+        <a class="btn" href="{{ url_for('admin_users') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

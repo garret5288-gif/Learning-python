@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login{% endblock %}
+{% block content %}
+<h2>Admin Login</h2>
+<form method="post">
+    <label for="key">Admin Key</label>
+    <input type="text" id="key" name="key" required />
+    <div style="margin-top:10px;">
+        <button class="btn primary" type="submit">Login</button>
+        <a class="btn" href="{{ url_for('index') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

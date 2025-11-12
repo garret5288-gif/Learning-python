@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Admin - Users{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content: space-between; align-items: baseline;">
+    <h2>Users</h2>
+    <a class="btn primary" href="{{ url_for('admin_add_user') }}">Add User</a>
+</div>
+{% if not users %}
+<p>No users yet.</p>
+{% else %}
+<table style="width:100%; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Username</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Email</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Created</th>
+            <th style="text-align:left; border-bottom:1px solid #e5e7eb; padding:6px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td style="padding:6px;">{{ u['username'] }}</td>
+            <td style="padding:6px;">{{ u['email'] }}</td>
+            <td style="padding:6px;">{{ u['created_at'] }}</td>
+            <td style="padding:6px;">
+                <form method="post" action="{{ url_for('admin_delete_user', user_id=u['id']) }}" style="display:inline;"
+                    onsubmit="return confirm('Delete this user?');">
+                    <button class="btn danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

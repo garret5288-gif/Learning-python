@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}My Items{% endblock %}
+{% block content %}
+<div style="display:flex; justify-content: space-between; align-items: baseline;">
+    <h2>My Items</h2>
+    <a class="btn primary" href="{{ url_for('create_item') }}">New Item</a>
+</div>
+{% if not items %}
+<p>No items yet.</p>
+{% else %}
+<ul style="list-style:none; padding:0;">
+    {% for it in items %}
+    <li style="padding:8px 0; border-bottom:1px solid #e5e7eb;">
+        <a href="{{ url_for('view_item', item_id=it['id']) }}" style="font-weight:700; text-decoration:none;">{{
+            it['title'] }}</a>
+        <div style="color:#6b7280; font-size:0.9em;">{{ it['created_at'] }}</div>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
