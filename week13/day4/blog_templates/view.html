@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} - My Blog{% endblock %}
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h1 class="card-title h3">{{ post.title }}</h1>
+        <p class="card-subtitle text-muted small mb-3">by {{ post.author }} • created {{ post.created_at }}{% if
+            post.updated_at %} • updated {{ post.updated_at }}{% endif %}</p>
+        <div class="card-text">
+            <p class="content-pre">{{ post.content }}</p>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            {% if session.get('username') == post.author %}
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit', post_id=post.id) }}">Edit</a>
+            <form class="inline" method="post" action="{{ url_for('remove', post_id=post.id) }}"
+                onsubmit="return confirm('Delete this post?');">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+            </form>
+            {% endif %}
+            <a class="btn btn-sm btn-outline-primary" href="{{ url_for('index') }}">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
