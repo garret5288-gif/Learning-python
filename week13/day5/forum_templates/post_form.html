@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'New Thread' if mode == 'create' else 'Edit Thread' }}{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ 'New Thread' if mode == 'create' else 'Edit Thread' }}</h3>
+<form method="post" class="mb-3">
+    <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" name="title" type="text" class="form-control" value="{{ (post.title if post else '') | e }}"
+            required>
+    </div>
+    <div class="mb-3">
+        <label for="body" class="form-label">Body</label>
+        <textarea id="body" name="body" class="form-control" rows="6"
+            required>{{ (post.body if post else '') | e }}</textarea>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary" type="submit">{{ 'Create' if mode == 'create' else 'Save Changes' }}</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

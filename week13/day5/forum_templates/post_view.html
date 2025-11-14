@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h3 class="card-title h4">{{ post.title }}</h3>
+        <p class="card-subtitle text-muted small mb-3">by {{ post.author.username }} • {{ post.created_at|dt }} {% if
+            post.is_locked
+            %}<span class="badge bg-warning text-dark">Locked</span>{% endif %}</p>
+        <div class="card-text">
+            <pre class="mb-0" style="white-space: pre-wrap;">{{ post.body }}</pre>
+        </div>
+        <div class="d-flex gap-2 mt-3">
+            {% if can_edit %}
+            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('post_edit', post_id=post.id) }}">Edit</a>
+            <form method="post" action="{{ url_for('post_delete', post_id=post.id) }}"
+                onsubmit="return confirm('Delete this post?');">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+            </form>
+            {% endif %}
+            {% if session.get('is_moderator') %}
+            <form method="post" action="{{ url_for('post_lock', post_id=post.id) }}">
+                <button class="btn btn-sm btn-outline-warning" type="submit">{{ 'Unlock' if post.is_locked else 'Lock'
+                    }}</button>
+            </form>
+            {% endif %}
+            {% if session.get('user_id') %}
+            <form method="post" action="{{ url_for('report_post', post_id=post.id) }}" class="ms-auto">
+                <input type="hidden" name="reason" value="User report">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Report</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<h4 class="mb-3">Comments</h4>
+{% if comments %}
+<ul class="list-group mb-3">
+    {% for c in comments %}
+    <li class="list-group-item">
+        <div class="d-flex justify-content-between">
+            <div>
+                <div class="fw-semibold">{{ c.author.username }}</div>
+                <div class="text-muted small">{{ c.created_at|dt }}</div>
+                <div class="mt-2">{{ c.body }}</div>
+            </div>
+            <div class="d-flex gap-2 align-items-start">
+                {% if session.get('user_id') %}
+                <form method="post" action="{{ url_for('report_comment', comment_id=c.id) }}">
+                    <input type="hidden" name="reason" value="User report">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Report</button>
+                </form>
+                {% endif %}
+                {% if session.get('is_moderator') or (user and user.id == c.author_id) %}
+                <form method="post" action="{{ url_for('comment_delete', comment_id=c.id) }}"
+                    onsubmit="return confirm('Delete this comment?');">
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">Delete</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted">No comments yet.</p>
+{% endif %}
+
+{% if session.get('user_id') and not post.is_locked %}
+<form method="post" action="{{ url_for('comment_add', post_id=post.id) }}" class="mb-3">
+    <div class="mb-3">
+        <label for="body" class="form-label">Add a comment</label>
+        <textarea id="body" name="body" class="form-control" rows="4" required></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Comment</button>
+</form>
+{% elif post.is_locked %}
+<div class="alert alert-warning">This thread is locked.</div>
+{% endif %}
+{% endblock %}

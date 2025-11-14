@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Moderation{% endblock %}
+{% block content %}
+<h3 class="mb-3">Open Reports</h3>
+{% if reports %}
+<ul class="list-group mb-4">
+    {% for r in reports %}
+    <li class="list-group-item">
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="me-3">
+                <div class="fw-semibold">{{ 'Post #' ~ r.post_id if r.post_id else 'Comment #' ~ r.comment_id }}</div>
+                <div class="text-muted small">Reason: {{ r.reason }} • {{ r.created_at|dt }}</div>
+                {% if r.post_id %}<div class="mt-1">{{ r.post.title }}</div>{% endif %}
+                {% if r.comment_id %}<div class="mt-1">{{ r.comment.body }}</div>{% endif %}
+            </div>
+            <form method="post" action="{{ url_for('resolve_report', report_id=r.id) }}">
+                <button class="btn btn-sm btn-outline-success" type="submit">Resolve</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted">No open reports.</p>
+{% endif %}
+
+<h3 class="mb-3">Recently Deleted</h3>
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <h5>Posts</h5>
+        {% if deleted_posts %}
+        <ul class="list-group">
+            {% for p in deleted_posts %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span>{{ p.title }}</span>
+                <form method="post" action="{{ url_for('restore_post', post_id=p.id) }}">
+                    <button class="btn btn-sm btn-outline-primary" type="submit">Restore</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No deleted posts.</p>
+        {% endif %}
+    </div>
+    <div class="col-12 col-lg-6">
+        <h5>Comments</h5>
+        {% if deleted_comments %}
+        <ul class="list-group">
+            {% for c in deleted_comments %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span>{{ c.body[:50] }}{% if c.body|length > 50 %}…{% endif %}</span>
+                <form method="post" action="{{ url_for('restore_comment', comment_id=c.id) }}">
+                    <button class="btn btn-sm btn-outline-primary" type="submit">Restore</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No deleted comments.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+:root {
+    --forum-bg-start: #141e30;
+    --forum-bg-end: #243b55;
+    --forum-card-bg: rgba(255, 255, 255, 0.9);
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    background: linear-gradient(135deg, var(--forum-bg-start), var(--forum-bg-end));
+    background-attachment: fixed;
+}
+
+/* Container panel for readability */
+main .row .col-12.col-lg-9 {
+    background: var(--forum-card-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    padding: 1.25rem 1.25rem 1.5rem;
+}
+
+/* Navbar tint to complement gradient */
+.navbar.bg-dark {
+    background-color: #0b2a3b !important;
+}
+
+.navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+
+/* Thread list tweaks */
+.list-group-item {
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.list-group-item:hover {
+    background: #f8fafc;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #1d72b8;
+    border-color: #1d72b8;
+}
+
+.btn-primary:hover {
+    background-color: #165a8a;
+    border-color: #165a8a;
+}
+
+/* Forms */
+.form-label {
+    font-weight: 600;
+}
+
+/* Post content preserve spacing */
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Utility spacing */
+.mt-2\/3 {
+    margin-top: .75rem;
+}
+
+/* Footer: constrained, centered */
+.forum-footer {
+    background: rgba(255, 255, 255, 0.85);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.forum-footer .footer-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
