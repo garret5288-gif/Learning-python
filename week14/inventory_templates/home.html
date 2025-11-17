@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Inventory - Home{% endblock %}
+{% block content %}
+<div class="p-4 bg-light rounded">
+    <h1 class="h3">Welcome to the Inventory Management System</h1>
+    <p class="text-muted">Use the navigation to view and manage products.</p>
+    <a class="btn btn-primary" href="/inventory">Go to Inventory</a>
+    <a class="btn btn-outline-secondary" href="/api/products" target="_blank">View API</a>
+</div>
+{% endblock %}
