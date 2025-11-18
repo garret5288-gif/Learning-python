@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Merge · Data Analyzer{% endblock %}
+{% block content %}
+<h1 class="mb-3">Merge Sources</h1>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-12 col-md-10">
+        <input class="form-control" name="ids" placeholder="Comma IDs (e.g. 1,2,3)"
+            value="{{ request.args.get('ids','') }}">
+    </div>
+    <div class="col-12 col-md-2 d-grid">
+        <button class="btn btn-primary">Merge</button>
+    </div>
+</form>
+{% if sources %}
+<h5>Selected Sources</h5>
+<ul class="list-group mb-3">
+    {% for s in sources %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ s.id }} — {{ s.name }}</span>
+        <span class="badge text-bg-secondary">{{ s.kind }}</span>
+    </li>
+    {% endfor %}
+</ul>
+<h5>Common Columns</h5>
+{% if common_cols %}
+<ul class="list-group mb-3">
+    {% for c in common_cols %}
+    <li class="list-group-item">{{ c }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted">None.</p>
+{% endif %}
+<h5>Stats Per Source</h5>
+<div class="row g-3">
+    {% for stats in merged_stats %}
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                {% if stats %}
+                {% for col, st in stats.items() %}
+                <div class="mb-2">
+                    <div class="fw-semibold">{{ col }}</div>
+                    <div class="small">min {{ st.min }} max {{ st.max }} mean {{ '%.2f'|format(st.mean) }}</div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="text-muted small">No numeric columns.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">Provide source IDs to merge.</p>
+{% endif %}
+{% endblock %}

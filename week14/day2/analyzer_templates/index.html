@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Sources · Data Analyzer{% endblock %}
+{% block content %}
+<h1 class="mb-3">Sources</h1>
+<div class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Add Source</h5>
+                <form method="post" enctype="multipart/form-data" class="vstack gap-2">
+                    <input class="form-control" name="name" placeholder="Name (optional)">
+                    <select class="form-select" name="mode" required>
+                        <option value="csv">CSV Upload</option>
+                        <option value="json_url">Remote JSON URL</option>
+                        <option value="manual">Manual JSON Lines</option>
+                    </select>
+                    <div class="csv-fields">
+                        <input class="form-control" type="file" name="csv_file" accept=".csv">
+                    </div>
+                    <div class="json-url-fields d-none">
+                        <input class="form-control" name="json_url" placeholder="https://example.com/data.json">
+                    </div>
+                    <div class="manual-fields d-none">
+                        <textarea class="form-control" rows="6" name="manual_rows"
+                            placeholder='{"x":1,"y":2}\n{"x":3,"y":4}'></textarea>
+                    </div>
+                    <button class="btn btn-primary">Ingest</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Existing Sources</h5>
+                {% if sources %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Kind</th>
+                            <th>Rows</th>
+                            <th>Created</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in sources %}
+                        <tr>
+                            <td>{{ s.id }}</td>
+                            <td>{{ s.name }}</td>
+                            <td><span class="badge text-bg-secondary">{{ s.kind }}</span></td>
+                            <td>{{ counts[s.id] }}</td>
+                            <td>{{ s.created_at }}</td>
+                            <td><a class="btn btn-sm btn-outline-primary"
+                                    href="{{ url_for('source_detail', source_id=s.id) }}">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No sources yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const modeSelect = document.querySelector('select[name="mode"]');
+    const csvFields = document.querySelector('.csv-fields');
+    const jsonFields = document.querySelector('.json-url-fields');
+    const manualFields = document.querySelector('.manual-fields');
+    function updateFields() {
+        const m = modeSelect.value;
+        csvFields.classList.toggle('d-none', m !== 'csv');
+        jsonFields.classList.toggle('d-none', m !== 'json_url');
+        manualFields.classList.toggle('d-none', m !== 'manual');
+    }
+    modeSelect.addEventListener('change', updateFields); updateFields();
+</script>
+{% endblock %}
