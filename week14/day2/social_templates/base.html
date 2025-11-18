@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}Social Aggregator{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: linear-gradient(180deg, #f8fafc, #eef2f7);
+        }
+
+        .post-card img {
+            max-width: 100%;
+            border-radius: .4rem;
+        }
+
+        .source-badge {
+            text-transform: uppercase;
+            font-size: .7rem;
+        }
+    </style>
+</head>
+
+<body class="p-3 p-md-4">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded shadow-sm mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-semibold" href="/">Aggregator</a>
+            <form class="d-flex" method="get" action="/">
+                <input class="form-control me-2" name="subs" placeholder="Subreddits (python, flask)"
+                    value="{{ request.args.get('subs', '') }}" />
+                <input class="form-control me-2" name="channels" placeholder="YouTube channel IDs"
+                    value="{{ request.args.get('channels', '') }}" />
+                <input class="form-control me-2" name="rss" placeholder="RSS URLs (comma or newline)"
+                    value="{{ request.args.get('rss', '') }}" />
+                <input class="form-control me-2" name="limit" type="number" min="1" max="50"
+                    value="{{ request.args.get('limit', 10) }}" />
+                <button class="btn btn-outline-primary" type="submit">Update</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>
