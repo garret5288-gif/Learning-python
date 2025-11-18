@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Weather</h5>
+                <div class="text-muted small mb-2">{{ weather.city }}, {{ weather.country }}</div>
+                <div class="display-6">{{ weather.temp_c }}°C</div>
+                <div class="mt-1">{{ weather.desc }}</div>
+                <div class="text-muted small mt-2">As of {{ weather.as_of }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Top News</h5>
+                <ul class="list-unstyled mb-0">
+                    {% for n in news %}
+                    <li class="mb-2"><a href="{{ n.url }}" target="_blank">{{ n.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="card-title mb-0">Stocks</h5>
+                    <div class="text-muted small">{{ tickers|join(', ') }}</div>
+                </div>
+                <div class="table-responsive mt-2">
+                    <table class="table table-sm align-middle">
+                        <thead>
+                            <tr>
+                                <th>Symbol</th>
+                                <th class="text-end">Open</th>
+                                <th class="text-end">High</th>
+                                <th class="text-end">Low</th>
+                                <th class="text-end">Close</th>
+                                <th class="text-end">Volume</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in stocks %}
+                            <tr>
+                                <td class="fw-semibold">{{ s.symbol }}</td>
+                                <td class="text-end">{{ s.open }}</td>
+                                <td class="text-end">{{ s.high }}</td>
+                                <td class="text-end">{{ s.low }}</td>
+                                <td class="text-end">{{ s.close }}</td>
+                                <td class="text-end">{{ s.volume }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-muted small">As of {{ stocks[0].date if stocks and stocks[0].date else '' }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
