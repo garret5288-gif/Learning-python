@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Dataset {{ dataset.name }} · BI{% endblock %}
+{% block content %}
+<h1 class="mb-3">Dataset: {{ dataset.name }}</h1>
+<p class="text-muted">Rows: {{ dataset.rows.count() }}</p>
+<h5>Last 30 Days Daily Aggregates</h5>
+<canvas id="dailyDetail" height="140" data-points='{{ daily|tojson }}'></canvas>
+<h5 class="mt-4">Sample Rows ({{ rows|length }})</h5>
+<pre class="code-block bg-dark text-light p-2 rounded" style="max-height:300px;overflow:auto;">{% for r in rows %}{{ r|tojson }}
+{% endfor %}</pre>
+<a class="btn btn-outline-secondary" href="/">Back</a>
+<script>
+    const cv = document.getElementById('dailyDetail');
+    if (cv && cv.dataset.points) {
+        try {
+            const pts = JSON.parse(cv.dataset.points);
+            new Chart(cv, {
+                type: 'bar',
+                data: { labels: pts.map(p => p.day.slice(5)), datasets: [{ data: pts.map(p => p.sales), backgroundColor: '#0d6efd' }] },
+                options: { plugins: { legend: { display: false } } }
+            });
+        } catch (e) { console.warn('Detail chart failed', e); }
+    }
+</script>
+{% endblock %}

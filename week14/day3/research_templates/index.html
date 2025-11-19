@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Studies</h2>
+    <button class="btn btn-sm btn-primary" data-bs-toggle="collapse" data-bs-target="#newStudy">New Study</button>
+</div>
+<div id="newStudy" class="collapse mb-4">
+    <form method="post" class="card card-body">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <input name="title" required class="form-control" placeholder="Title">
+            </div>
+            <div class="col-md-6">
+                <input name="description" class="form-control" placeholder="Description (optional)">
+            </div>
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-success">Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+<table class="table table-sm table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Title</th>
+            <th>Created</th>
+            <th>Points</th>
+            <th>Participants</th>
+            <th>Date Range</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in studies %}
+        <tr>
+            <td><a href="{{ url_for('study_view', study_id=s.id) }}">{{ s.title }}</a></td>
+            <td>{{ s.created_at.date() }}</td>
+            <td>{{ stats[s.id].count }}</td>
+            <td>{{ stats[s.id].participants }}</td>
+            <td>
+                {% if stats[s.id].date_range[0] %}
+                {{ stats[s.id].date_range[0] }} – {{ stats[s.id].date_range[1] }}
+                {% else %}
+                —
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not studies %}
+<div class="alert alert-info">No studies yet. Create one above.</div>
+{% endif %}
+{% endblock %}

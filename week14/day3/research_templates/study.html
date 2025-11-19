@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-3">Study: {{ study.title }}</h2>
+<p class="text-muted">{{ study.description }}</p>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-uppercase text-muted">Stats</h6>
+                <ul class="list-unstyled mb-0 small">
+                    <li><strong>Points:</strong> {{ stats.count }}</li>
+                    <li><strong>Participants:</strong> {{ stats.participants }}</li>
+                    <li><strong>Date Range:</strong> {% if stats.date_range[0] %}{{ stats.date_range[0] }} – {{
+                        stats.date_range[1] }}{% else %}—{% endif %}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" class="mb-3">
+                    <input type="hidden" name="mode" value="add_point">
+                    <div class="row g-2">
+                        <div class="col-md-3">
+                            <input name="participant" class="form-control" placeholder="Participant">
+                        </div>
+                        <div class="col-md-7">
+                            <input name="payload" class="form-control" placeholder='JSON payload {"value":42}'>
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button class="btn btn-primary">Add Point</button>
+                        </div>
+                    </div>
+                </form>
+                <form method="post" enctype="multipart/form-data" class="mb-2">
+                    <input type="hidden" name="mode" value="upload_csv">
+                    <div class="input-group input-group-sm">
+                        <input type="file" name="csv_file" accept=".csv" class="form-control" required>
+                        <button class="btn btn-outline-secondary">Upload CSV</button>
+                    </div>
+                    <div class="form-text">CSV should include headers; participant/subject column optional.</div>
+                </form>
+                <a class="btn btn-sm btn-outline-success" href="{{ url_for('export_json', study_id=study.id) }}">Export
+                    JSON</a>
+            </div>
+        </div>
+    </div>
+</div>
+<h5>Recent Points ({{ points|length }})</h5>
+<table class="table table-sm small">
+    <thead class="table-light">
+        <tr>
+            <th>ID</th>
+            <th>TS</th>
+            <th>Participant</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p, obj in zip(points, parsed) %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.ts.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ p.participant or '—' }}</td>
+            <td>
+                <pre class="small-json">{{ obj | tojson(indent=2) }}</pre>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not points %}
+<div class="alert alert-info">No data points yet. Add above or upload a CSV.</div>
+{% endif %}
+{% endblock %}

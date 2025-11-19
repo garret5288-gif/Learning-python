@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Metric {{ metric.name }} · Personal Analytics{% endblock %}
+{% block content %}
+<h1 class="mb-3">{{ metric.name }} {% if metric.unit %}<span class="text-muted small">({{ metric.unit }})</span>{% endif
+    %}</h1>
+<form method="post" class="row g-2 mb-3">
+    <div class="col-3"><input name="value" step="any" type="number" class="form-control" placeholder="Value" required>
+    </div>
+    <div class="col-6"><input name="note" class="form-control" placeholder="Note"></div>
+    <div class="col-3 d-grid"><button class="btn btn-primary">Add Entry</button></div>
+</form>
+{% if stats %}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-box">
+            <div class="fw-semibold">Count</div>
+            <div>{{ stats.count }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box">
+            <div class="fw-semibold">Min</div>
+            <div>{{ stats.min }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box">
+            <div class="fw-semibold">Max</div>
+            <div>{{ stats.max }}</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box">
+            <div class="fw-semibold">Avg</div>
+            <div>{{ '%.2f'|format(stats.avg) }}</div>
+        </div>
+    </div>
+</div>
+<canvas id="detailChart" height="140" data-points='{{ stats.spark|tojson }}'></canvas>
+{% else %}
+<p class="text-muted">No entries yet.</p>
+{% endif %}
+<h5 class="mt-4">Entries</h5>
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Value</th>
+            <th>Timestamp</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in entries %}
+        <tr>
+            <td>{{ e.id }}</td>
+            <td>{{ e.value }}</td>
+            <td>{{ e.ts }}</td>
+            <td>{{ e.note or '' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a class="btn btn-outline-secondary" href="/">Back</a>
+<script>
+    // Detail chart init
+    const dc = document.getElementById('detailChart');
+    if (dc && dc.dataset.points) {
+        try {
+            const pts = JSON.parse(dc.dataset.points);
+            new Chart(dc, {
+                type: 'bar',
+                data: { labels: pts.map(p => p.day.slice(5)), datasets: [{ data: pts.map(p => p.avg), backgroundColor: '#0d6efd' }] },
+                options: { plugins: { legend: { display: false } } }
+            });
+        } catch (e) { console.warn('Detail chart init failed', e); }
+    }
+</script>
+{% endblock %}

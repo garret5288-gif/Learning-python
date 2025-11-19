@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · Business Intelligence{% endblock %}
+{% block content %}
+<h1 class="mb-3">Business Intelligence Dashboard</h1>
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-5">
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Add Dataset</h5>
+                <form method="post" enctype="multipart/form-data" class="vstack gap-2">
+                    <input type="hidden" name="mode" value="csv">
+                    <input name="name" class="form-control" placeholder="Name (optional)">
+                    <input type="file" name="csv_file" accept=".csv" class="form-control">
+                    <button class="btn btn-primary">Upload CSV</button>
+                </form>
+                <hr>
+                <form method="post" class="vstack gap-2">
+                    <input type="hidden" name="mode" value="sample">
+                    <input name="name" class="form-control" placeholder="Sample name" value="Sample Data">
+                    <button class="btn btn-secondary">Generate Sample</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">Add KPI</h5>
+                <form method="post" class="vstack gap-2">
+                    <input type="hidden" name="mode" value="kpi">
+                    <input name="kpi_name" class="form-control" placeholder="KPI Name" required>
+                    <input name="expression" class="form-control"
+                        placeholder="Expression e.g. SUM(sales_amount) or COUNT" required>
+                    <button class="btn btn-outline-primary">Save KPI</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-7">
+        <h5 class="mb-2">Datasets</h5>
+        <div class="row g-3">
+            {% for s in ds_summaries %}
+            <div class="col-12 col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <h6 class="mb-0"><a href="{{ url_for('dataset_view', dataset_id=s.dataset.id) }}">{{
+                                    s.dataset.name }}</a></h6>
+                            <span class="badge text-bg-secondary">{{ s.dataset.rows.count() }} rows</span>
+                        </div>
+                        <div class="small text-muted mb-1">7-day sales total {{ s.total_sales }}</div>
+                        <canvas class="dailyChart" height="100" data-points='{{ s.daily|tojson }}'></canvas>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not ds_summaries %}<div class="col-12">
+                <p class="text-muted">No datasets yet.</p>
+            </div>{% endif %}
+        </div>
+        <hr>
+        <h5 class="mb-2">KPIs</h5>
+        <div class="row g-3">
+            {% for k in kpis %}
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="kpi-box">
+                    <div class="fw-semibold">{{ k.name }}</div>
+                    <div class="small text-muted">{{ k.expression }}</div>
+                    <div class="fs-5">{{ kpi_values[k.id] }}</div>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not kpis %}<div class="col-12">
+                <p class="text-muted">No KPIs yet.</p>
+            </div>{% endif %}
+        </div>
+    </div>
+</div>
+<script>
+    // Charts init
+    document.querySelectorAll('canvas.dailyChart').forEach(cv => {
+        try {
+            const pts = JSON.parse(cv.dataset.points);
+            new Chart(cv, {
+                type: 'line',
+                data: { labels: pts.map(p => p.day.slice(5)), datasets: [{ data: pts.map(p => p.sales), borderColor: '#0d6efd', tension: .3, pointRadius: 0 }] },
+                options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+            });
+        } catch (e) { console.warn('Chart init failed', e); }
+    });
+</script>
+{% endblock %}
