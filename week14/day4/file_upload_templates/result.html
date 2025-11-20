@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Processed result</h5>
+                <dl class="row">
+                    <dt class="col-sm-3">Filename</dt>
+                    <dd class="col-sm-9">{{ result.filename }}</dd>
+
+                    <dt class="col-sm-3">Size</dt>
+                    <dd class="col-sm-9">{{ result.size }} bytes</dd>
+
+                    <dt class="col-sm-3">Type</dt>
+                    <dd class="col-sm-9">{{ result.type }}</dd>
+                </dl>
+
+                {% if result.preview %}
+                <h6>Preview</h6>
+                <pre style="white-space: pre-wrap;">{{ result.preview }}</pre>
+                {% endif %}
+
+                {% if result.json_type %}
+                <h6>JSON</h6>
+                <p>Type: {{ result.json_type }}{% if result.keys %}, Keys: {{ result.keys|join(', ') }}{% endif %}</p>
+                {% endif %}
+
+                {% if result.rows is not none %}
+                <h6>CSV</h6>
+                <p>Rows: {{ result.rows }}</p>
+                {% if result.numeric_stats %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Column</th>
+                                <th>Count</th>
+                                <th>Min</th>
+                                <th>Max</th>
+                                <th>Avg</th>
+                                <th>Median</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for col, s in result.numeric_stats.items() %}
+                            <tr>
+                                <td>{{ col }}</td>
+                                <td>{{ s.count }}</td>
+                                <td>{{ '%.3f'|format(s.min) }}</td>
+                                <td>{{ '%.3f'|format(s.max) }}</td>
+                                <td>{{ '%.3f'|format(s.avg) }}</td>
+                                <td>{{ '%.3f'|format(s.median) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                {% if result.error %}
+                <div class="alert alert-warning mt-3">{{ result.error }}</div>
+                {% endif %}
+
+                <a class="btn btn-secondary" href="{{ url_for('index') }}">Upload another</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
