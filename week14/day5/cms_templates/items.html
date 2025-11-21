@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-3">{{ title }}</h2>
+<div class="mb-3">
+    <div class="btn-group btn-group-sm" role="group">
+        <a class="btn btn-outline-secondary {% if not active_source %}active{% endif %}"
+            href="{{ url_for('index') }}">All</a>
+        {% for s in sources %}
+        <a class="btn btn-outline-secondary {% if active_source==s.id %}active{% endif %}"
+            href="{{ url_for('items_by_source', source_id=s.id) }}">{{ s.name }}</a>
+        {% endfor %}
+    </div>
+</div>
+<table class="table table-sm table-striped">
+    <thead class="table-light">
+        <tr>
+            <th>Title</th>
+            <th>Source</th>
+            <th>Summary</th>
+            <th>Published</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in items %}
+        <tr>
+            <td><a href="{{ url_for('item_view', item_id=i.id) }}">{{ i.title }}</a></td>
+            <td>{{ i.source.name if i.source }}</td>
+            <td>{{ i.summary[:120] }}{% if i.summary|length > 120 %}...{% endif %}</td>
+            <td>{{ i.published_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not items %}
+<div class="alert alert-info">No items.</div>
+{% endif %}
+
+<hr class="my-4" />
+<h5>Available Sources</h5>
+<table class="table table-sm table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>Items</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sources %}
+        <tr>
+            <td><a href="{{ url_for('items_by_source', source_id=s.id) }}">{{ s.name }}</a></td>
+            <td>{{ s.kind }}</td>
+            <td>{{ s.items.count() }}</td>
+            <td>
+                <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('ingest', source_id=s.id) }}">Ingest</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not sources %}
+<div class="alert alert-warning">No sources configured yet. Go to the Sources page to add some.</div>
+{% endif %}
+{% endblock %}

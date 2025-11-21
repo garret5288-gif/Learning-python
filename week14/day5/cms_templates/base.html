@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Content Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f5f7fa;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+        }
+
+        pre {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">CMS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navBar"
+                aria-controls="navBar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navBar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}"
+                            href="{{ url_for('index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'sources' %}active{% endif %}"
+                            href="{{ url_for('sources') }}">Sources</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('ingest_all') }}">Ingest All</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if request.endpoint in ['api_sources','api_content'] %}active{% endif %}"
+                            href="#" id="apiMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">API</a>
+                        <ul class="dropdown-menu" aria-labelledby="apiMenu">
+                            <li><a class="dropdown-item" href="{{ url_for('api_sources') }}" target="_blank">Sources
+                                    JSON</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('api_content') }}" target="_blank">Content
+                                    JSON</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <span class="navbar-text small text-muted">
+                    {{ sources|length if sources is defined else '' }} source(s)
+                </span>
+            </div>
+        </div>
+    </nav>
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

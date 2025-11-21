@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-3">Sources</h2>
+<form method="post" class="row g-2 mb-4">
+    <div class="col-md-3"><input name="name" class="form-control" placeholder="Name" required></div>
+    <div class="col-md-5"><input name="url" class="form-control" placeholder="Feed URL" required></div>
+    <div class="col-md-2">
+        <select name="kind" class="form-select" required>
+            <option value="rss">RSS</option>
+            <option value="json">JSON</option>
+        </select>
+    </div>
+    <div class="col-md-2 d-grid"><button class="btn btn-primary">Add Source</button></div>
+</form>
+<table class="table table-sm table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>URL</th>
+            <th>Items</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sources %}
+        <tr>
+            <td><a href="{{ url_for('items_by_source', source_id=s.id) }}">{{ s.name }}</a></td>
+            <td>{{ s.kind }}</td>
+            <td class="text-truncate" style="max-width:300px;">{{ s.url }}</td>
+            <td>{{ s.items.count() }}</td>
+            <td><a class="btn btn-sm btn-outline-secondary" href="{{ url_for('ingest', source_id=s.id) }}">Ingest</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% if not sources %}
+<div class="alert alert-info">No sources yet. Add one above.</div>
+{% endif %}
+{% endblock %}

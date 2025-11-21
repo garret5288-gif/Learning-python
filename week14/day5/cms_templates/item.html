@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ item.title }}</h2>
+<p class="text-muted">Source: {{ item.source.name if item.source }} | Published: {{ item.published_at.strftime('%Y-%m-%d
+    %H:%M:%S') }}</p>
+{% if item.link %}<p><a href="{{ item.link }}" target="_blank" rel="noopener"
+        class="btn btn-sm btn-outline-primary">Open Link</a></p>{% endif %}
+{% if item.summary %}<p>{{ item.summary }}</p>{% endif %}
+<h6>Raw Data</h6>
+<pre>{{ data | tojson(indent=2) }}</pre>
+<a class="btn btn-secondary" href="{{ url_for('index') }}">Back</a>
+{% endblock %}
