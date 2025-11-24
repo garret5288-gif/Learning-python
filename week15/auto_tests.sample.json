@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Home page loads",
+        "method": "GET",
+        "url": "/",
+        "status": 200,
+        "text_contains": "Available Sources"
+    },
+    {
+        "name": "Sources API returns list",
+        "method": "GET",
+        "url": "/api/sources",
+        "status": 200,
+        "json_contains": {
+            "length_at_least": 1
+        }
+    },
+    {
+        "name": "Content API ok",
+        "method": "GET",
+        "url": "/api/content",
+        "status": 200
+    },
+    {
+        "name": "Missing content 404",
+        "method": "GET",
+        "url": "/api/content/99999999",
+        "status": 404
+    }
+]

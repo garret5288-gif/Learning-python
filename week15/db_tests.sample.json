@@ -1,0 +1,71 @@
+[
+    {
+        "name": "Table products exists",
+        "check": "table_exists",
+        "table": "products"
+    },
+    {
+        "name": "products.id column exists",
+        "check": "column_exists",
+        "table": "products",
+        "column": "id",
+        "type": "INTEGER"
+    },
+    {
+        "name": "products has rows",
+        "check": "row_count",
+        "table": "products",
+        "op": ">",
+        "value": 0
+    },
+    {
+        "name": "products.name not null",
+        "check": "not_null",
+        "table": "products",
+        "column": "name"
+    },
+    {
+        "name": "products.id unique",
+        "check": "unique",
+        "table": "products",
+        "columns": [
+            "id"
+        ]
+    },
+    {
+        "name": "price between 0 and 9999",
+        "check": "value_range",
+        "table": "products",
+        "column": "price",
+        "min": 0,
+        "max": 9999,
+        "inclusive": true
+    },
+    {
+        "name": "category in allowed set",
+        "check": "in_set",
+        "table": "products",
+        "column": "category",
+        "allowed": [
+            "A",
+            "B",
+            "C"
+        ],
+        "ignore_nulls": true
+    },
+    {
+        "name": "FK product->category exists",
+        "check": "foreign_key",
+        "table": "products",
+        "column": "category_id",
+        "ref_table": "categories",
+        "ref_column": "id"
+    },
+    {
+        "name": "At least 1 table exists",
+        "check": "query_expect",
+        "sql": "SELECT COUNT(*) FROM sqlite_master WHERE type='table'",
+        "op": ">",
+        "value": 0
+    }
+]

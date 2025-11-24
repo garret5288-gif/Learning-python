@@ -9,6 +9,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cms.db'
 app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
 db = SQLAlchemy(app)
 
+def init_app(database_uri: str = 'sqlite:///:memory:'):
+	"""Initialize a new Flask app instance for testing with a given DB URI."""
+	_test_app = Flask(__name__, template_folder="cms_templates")
+	_test_app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
+	_test_app.config['MAX_CONTENT_LENGTH'] = 4 * 1024 * 1024
+	_test_db = SQLAlchemy(_test_app)
+	with _test_app.app_context():
+		_test_db.create_all()
+	return _test_app, _test_db
+
 class Source(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(200), nullable=False)
