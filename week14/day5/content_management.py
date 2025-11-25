@@ -17,6 +17,13 @@ def init_app(database_uri: str = 'sqlite:///:memory:'):
 	_test_db = SQLAlchemy(_test_app)
 	with _test_app.app_context():
 		_test_db.create_all()
+		@_test_app.errorhandler(404)
+		def _not_found(e):  # pragma: no cover - template render
+			return render_template('error_404.html', title='Not Found'), 404
+
+		@_test_app.errorhandler(500)
+		def _server_error(e):  # pragma: no cover - template render
+			return render_template('error_500.html', title='Server Error'), 500
 	return _test_app, _test_db
 
 class Source(db.Model):
@@ -273,4 +280,11 @@ def api_content_detail(item_id):
 if __name__ == '__main__':
 	ensure_schema()
 	seed_default_sources()
+	@app.errorhandler(404)
+	def not_found(e):  # pragma: no cover - direct runtime
+		return render_template('error_404.html', title='Not Found'), 404
+
+	@app.errorhandler(500)
+	def server_error(e):  # pragma: no cover - direct runtime
+		return render_template('error_500.html', title='Server Error'), 500
 	app.run(debug=True, port=5009)

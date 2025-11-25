@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1 class="display-5">Server Error</h1>
+    <p class="lead">Sorry, something went wrong on our end.</p>
+    <hr>
+    <p>Please try again later or go back to the <a href="{{ url_for('index') }}">home page</a>.</p>
+</div>
+{% endblock %}

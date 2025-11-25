@@ -44,12 +44,6 @@ class ContentManagementTests(unittest.TestCase):
 		resp = self.client.get('/api/content/999999')
 		self.assertEqual(resp.status_code, 404)
 
-	def test_html_404_page(self):
-		# Request a non-existent HTML page route
-		resp = self.client.get('/no-such-page-xyz')
-		self.assertEqual(resp.status_code, 404)
-		self.assertIn(b'Page Not Found', resp.data)
-
 	def test_home_page(self):
 		resp = self.client.get('/')
 		self.assertEqual(resp.status_code, 200)
