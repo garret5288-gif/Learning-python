@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-2">
+    <h3 class="mb-0">Latest posts</h3>
+    <a class="btn btn-sm btn-primary" href="{{ url_for('post_create') }}">New Post</a>
+</div>
+<div class="list-group">
+    {% for p in posts %}
+    <a class="list-group-item list-group-item-action" href="{{ url_for('post_view', post_id=p.id) }}">
+        <div class="d-flex justify-content-between">
+            <strong>{{ p.title }}</strong>
+            <small>by <a href="{{ url_for('user_profile', username=p.author.username) }}">{{ p.author.username }}</a> on
+                {{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title mb-3">Compose message</h3>
+                <form method="post" class="mb-0">
+                    <input class="form-control mb-2" name="to" placeholder="Recipient username" value="{{ prefill }}"
+                        required>
+                    <textarea class="form-control mb-3" name="body" rows="5" placeholder="Your message"
+                        required></textarea>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary">Send</button>
+                        <a class="btn btn-outline-secondary" href="/messages">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
