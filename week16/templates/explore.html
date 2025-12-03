@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0">Explore</h3>
+    <a class="btn btn-sm btn-outline-secondary" href="/">Back</a>
+</div>
+<div class="row">
+    {% for it in items %}
+    <div class="col-12 col-md-6 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ it.title }}</h5>
+                <p class="card-text">{{ it.body }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% if not items %}
+    <div class="col-12">
+        <div class="alert alert-warning">No items available from external feed right now.</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

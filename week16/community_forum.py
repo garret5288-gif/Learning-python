@@ -4,6 +4,10 @@ from datetime import datetime
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
+import time
+from urllib.request import urlopen
+from urllib.error import URLError
 
 
 # --- App setup ---
@@ -15,6 +19,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = (os.getenv('W16_SECURE_COOKIES') or '').lower() in ('1', 'true', 'yes')
+app.config['EXTERNAL_TIMEOUT_SEC'] = 4
+app.config['EXTERNAL_CACHE_TTL_SEC'] = 120
 
 db = SQLAlchemy(app)
 
@@ -25,6 +31,7 @@ class User(db.Model):
 	username = db.Column(db.String(80), unique=True, nullable=False)
 	email = db.Column(db.String(120), unique=True, nullable=False)
 	password_hash = db.Column(db.String(128), nullable=False)
+	is_admin = db.Column(db.Boolean, default=False, nullable=False)
 	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 	posts = db.relationship('Post', back_populates='author', cascade='all, delete-orphan')
@@ -69,6 +76,56 @@ class Message(db.Model):
 
 with app.app_context():
 	db.create_all()
+	# Lightweight schema migration: add missing columns if upgrading existing DB
+	try:
+		cols = db.session.execute(db.text("PRAGMA table_info(user)")).mappings().all()
+		col_names = {row['name'] for row in cols}
+		if 'is_admin' not in col_names:
+			db.session.execute(db.text("ALTER TABLE user ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0"))
+			db.session.commit()
+	except Exception:
+		# If PRAGMA/ALTER fails, continue; user table may not exist yet or another issue.
+		pass
+
+# --- External API cache ---
+_external_cache = {
+	'explore_items': {
+		'updated_at': 0,
+		'data': []
+	}
+}
+
+def fetch_external_items():
+	"""Fetch external items with caching and timeout, return list of dicts."""
+	now = time.time()
+	ttl = app.config['EXTERNAL_CACHE_TTL_SEC']
+	entry = _external_cache['explore_items']
+	if now - entry['updated_at'] < ttl and entry['data']:
+		return entry['data']
+	url = 'https://jsonplaceholder.typicode.com/posts?_limit=10'
+	try:
+		# urllib timeout to avoid hanging
+		with urlopen(url, timeout=app.config['EXTERNAL_TIMEOUT_SEC']) as resp:
+			if resp.status != 200:
+				raise URLError(f'status {resp.status}')
+			payload = resp.read()
+			items = json.loads(payload.decode('utf-8'))
+			# normalize fields
+			normalized = [
+				{
+					'id': it.get('id'),
+					'title': (it.get('title') or '').strip(),
+					'body': (it.get('body') or '').strip()
+				}
+				for it in items
+			]
+			entry['data'] = normalized
+			entry['updated_at'] = now
+			return normalized
+	except Exception as e:
+		# Log minimal error to flash; keep last cache if any
+		flash('External feed unavailable.', 'error')
+		return entry['data'] or []
 
 
 # --- Helpers ---
@@ -87,6 +144,38 @@ def login_required(fn):
 		return fn(*args, **kwargs)
 	wrapper.__name__ = fn.__name__
 	return wrapper
+
+
+def admin_required(fn):
+	def wrapper(*args, **kwargs):
+		u = current_user()
+		if not u or not u.is_admin:
+			flash('Admin access required.', 'error')
+			return redirect(url_for('index'))
+		return fn(*args, **kwargs)
+	wrapper.__name__ = fn.__name__
+	return wrapper
+
+
+def author_or_admin_required(resource_author_id_getter):
+	"""
+	Ensure current user is resource author or admin.
+	resource_author_id_getter: callable that returns the author_id for the resource.
+	"""
+	def decorator(fn):
+		def wrapper(*args, **kwargs):
+			u = current_user()
+			if not u:
+				flash('Please log in.', 'error')
+				return redirect(url_for('login'))
+			author_id = resource_author_id_getter(*args, **kwargs)
+			if u.id != author_id and not u.is_admin:
+				flash('Not authorized.', 'error')
+				return redirect(url_for('index'))
+			return fn(*args, **kwargs)
+		wrapper.__name__ = fn.__name__
+		return wrapper
+	return decorator
 
 
 @app.context_processor
@@ -185,8 +274,25 @@ def logout():
 # --- Posts & Comments ---
 @app.route('/')
 def index():
-	posts = Post.query.order_by(Post.created_at.desc()).all()
-	return render_template('index.html', title='Home', posts=posts)
+	# search query
+	q = (request.args.get('q') or '').strip()
+	page = max(int(request.args.get('page') or 1), 1)
+	per_page = 10
+	query = Post.query
+	if q:
+		like = f"%{q}%"
+		query = query.filter(db.or_(Post.title.ilike(like), Post.body.ilike(like)))
+	total = query.count()
+	posts = query.order_by(Post.created_at.desc()).offset((page - 1) * per_page).limit(per_page).all()
+	has_next = page * per_page < total
+	has_prev = page > 1
+	return render_template('index.html', title='Home', posts=posts, q=q, page=page, has_next=has_next, has_prev=has_prev)
+
+
+@app.route('/explore')
+def explore():
+	items = fetch_external_items()
+	return render_template('explore.html', title='Explore', items=items)
 
 
 @app.route('/post/create', methods=['GET', 'POST'])
@@ -226,8 +332,33 @@ def post_view(post_id: int):
 			db.session.commit()
 			flash('Comment added.', 'success')
 			return redirect(url_for('post_view', post_id=post_id))
-	comments = Comment.query.filter_by(post_id=p.id).order_by(Comment.created_at.asc()).all()
-	return render_template('post_view.html', title=p.title, post=p, comments=comments)
+	# comments pagination
+	cpage = max(int(request.args.get('cpage') or 1), 1)
+	c_per_page = 10
+	c_query = Comment.query.filter_by(post_id=p.id)
+	total_c = c_query.count()
+	comments = c_query.order_by(Comment.created_at.asc()).offset((cpage - 1) * c_per_page).limit(c_per_page).all()
+	has_next_c = cpage * c_per_page < total_c
+	has_prev_c = cpage > 1
+	return render_template('post_view.html', title=p.title, post=p, comments=comments, cpage=cpage, has_next_c=has_next_c, has_prev_c=has_prev_c)
+
+
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def post_delete(post_id: int):
+	p = Post.query.get_or_404(post_id)
+	# authorize: author or admin
+	u = current_user()
+	if u.id != p.author_id and not u.is_admin:
+		flash('Not authorized to delete this post.', 'error')
+		return redirect(url_for('post_view', post_id=post_id))
+	if not _require_csrf():
+		return redirect(url_for('post_view', post_id=post_id))
+	# delete post and its comments
+	db.session.delete(p)
+	db.session.commit()
+	flash('Post deleted.', 'success')
+	return redirect(url_for('index'))
 
 
 # --- Messaging ---
@@ -260,6 +391,23 @@ def message_compose():
 				flash('Message sent.', 'success')
 				return redirect(url_for('inbox'))
 	return render_template('compose.html', title='Compose', prefill=prefill_to)
+
+
+@app.route('/comment/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def comment_delete(comment_id: int):
+	c = Comment.query.get_or_404(comment_id)
+	# authorize: comment author or admin
+	u = current_user()
+	if u.id != c.author_id and not u.is_admin:
+		flash('Not authorized to delete this comment.', 'error')
+		return redirect(url_for('post_view', post_id=c.post_id))
+	if not _require_csrf():
+		return redirect(url_for('post_view', post_id=c.post_id))
+	db.session.delete(c)
+	db.session.commit()
+	flash('Comment deleted.', 'success')
+	return redirect(url_for('post_view', post_id=c.post_id))
 
 
 # --- Profiles ---
