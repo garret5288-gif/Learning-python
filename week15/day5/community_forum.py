@@ -537,6 +537,15 @@ def comment_delete(comment_id: int):
 
 # --- Reporting & Moderation ---
 
+@app.route('/user/<username>')
+def user_profile(username: str):
+    u = Account.query.filter(db.func.lower(Account.username) == (username or '').lower()).first()
+    if not u:
+        flash('User not found.', 'error')
+        return redirect(url_for('index'))
+    posts = Post.query.filter_by(author_id=u.id, is_deleted=False).order_by(Post.created_at.desc()).limit(10).all()
+    return render_template('user_profile.html', u=u, posts=posts)
+
 @app.route('/post/<int:post_id>/report', methods=['POST'])
 @login_required
 def report_post(post_id: int):

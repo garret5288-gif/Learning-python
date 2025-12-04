@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}{{ u.username }} — Profile{% endblock %}
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h3 class="card-title h4">{{ u.username }}</h3>
+        <p class="text-muted mb-0">Joined {{ u.created_at|dt }}</p>
+    </div>
+</div>
+
+<h4 class="mb-3">Recent Posts</h4>
+{% if posts %}
+<ul class="list-group">
+    {% for p in posts %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+            <a class="fw-semibold" href="{{ url_for('post_view', post_id=p.id) }}">{{ p.title }}</a>
+            <div class="text-muted small">{{ p.created_at|dt }}</div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="text-muted">No posts yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h3 class="card-title">Edit Profile</h3>
+        <form method="post">
+            <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea id="bio" name="bio" class="form-control" rows="5"
+                    placeholder="Tell others about yourself...">{{ u.bio or '' }}</textarea>
+            </div>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <a class="btn btn-outline-secondary" href="{{ url_for('user_profile', username=u.username) }}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

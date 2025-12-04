@@ -1,0 +1,162 @@
+/* Light/Dark theme using CSS variables */
+:root {
+    --bg: #f8f9fa;
+    --text: #212529;
+    --card-bg: #ffffff;
+    --border: #dee2e6;
+    --primary: #0d6efd;
+}
+
+/* Dark mode variables */
+:root[data-theme="dark"] {
+    --bg: #121212;
+    --text: #e9ecef;
+    --card-bg: #1e1e1e;
+    --border: #2a2a2a;
+    --primary: #58a6ff;
+    /* brighter for better contrast */
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.card {
+    background: var(--card-bg);
+    border-color: var(--border);
+}
+
+.list-group-item {
+    background: var(--card-bg);
+    border-color: var(--border);
+}
+
+a {
+    color: var(--primary);
+}
+
+/* Improve readability of post titles and list items */
+.list-group-item-action {
+    color: var(--text);
+}
+
+.list-group-item-action strong {
+    color: var(--text);
+}
+
+.card-title {
+    color: var(--text);
+}
+
+/* Dark mode link contrast tweak */
+:root[data-theme="dark"] a {
+    color: #79c0ff;
+    /* higher contrast on dark */
+}
+
+:root[data-theme="dark"] a:hover,
+:root[data-theme="dark"] a:focus {
+    text-decoration: underline;
+}
+
+/* Better spacing */
+.container {
+    max-width: 900px;
+}
+
+.pagination {
+    justify-content: center;
+}
+
+/* Form tweaks */
+.form-label {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    /* ensure readable text */
+}
+
+/* Anchor buttons: override global link color so text stays readable */
+a.btn-primary,
+button.btn-primary {
+    color: #ffffff !important;
+}
+
+/* Hover/focus state for better affordance */
+.btn-primary:hover,
+.btn-primary:focus {
+    filter: brightness(0.95);
+}
+
+/* Dark mode: make pagination and outline buttons clearer */
+:root[data-theme="dark"] .pagination .page-link {
+    color: var(--text);
+    background-color: var(--card-bg);
+    border-color: var(--border);
+}
+
+:root[data-theme="dark"] .pagination .page-item.disabled .page-link {
+    color: #8a8f98;
+}
+
+:root[data-theme="dark"] .btn-outline-secondary {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+:root[data-theme="dark"] .btn-outline-secondary:hover,
+:root[data-theme="dark"] .btn-outline-secondary:focus {
+    background-color: var(--card-bg);
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+/* Messaging/inbox contrast */
+.message-item {
+    background: var(--card-bg);
+    color: var(--text);
+    border-color: var(--border);
+}
+
+:root[data-theme="dark"] .card .card-body {
+    color: var(--text);
+}
+
+.message-body {
+    color: var(--text);
+    line-height: 1.6;
+}
+
+:root[data-theme="dark"] .badge.bg-danger {
+    background-color: #ff6b6b !important;
+    /* brighter red badge in dark mode */
+}
+
+/* Dark mode: make muted text more legible on profile pages */
+:root[data-theme="dark"] .text-muted {
+    color: #adb5bd !important;
+}
+
+/* Profile header and list items */
+.profile-header {
+    color: var(--text);
+}
+
+:root[data-theme="dark"] .badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+
+/* Ensure list-group items in profile stay readable */
+:root[data-theme="dark"] .list-group-item {
+    color: var(--text);
+}

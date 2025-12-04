@@ -16,7 +16,13 @@
     <a class="list-group-item list-group-item-action" href="{{ url_for('post_view', post_id=p.id) }}">
         <div class="d-flex justify-content-between">
             <strong>{{ p.title }}</strong>
-            <small>by <a href="{{ url_for('user_profile', username=p.author.username) }}">{{ p.author.username }}</a> on
+            <small>by
+                {% if p.author and p.author.username %}
+                <a href="{{ url_for('user_profile', username=p.author.username) }}">{{ p.author.username }}</a>
+                {% else %}
+                <span class="text-muted">unknown</span>
+                {% endif %}
+                on
                 {{ p.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
         </div>
     </a>
@@ -28,8 +34,17 @@
     {% endif %}
     {% endfor %}
 </div>
-<nav class="mt-3">
-    <ul class="pagination pagination-sm">
+{% if posts|length == 0 %}
+<div class="card mt-3 shadow-sm">
+    <div class="card-body text-center">
+        <h5 class="card-title">No posts yet</h5>
+        <p class="card-text text-muted">Be the first to share something.</p>
+        <a class="btn btn-primary" href="{{ url_for('post_create') }}">Create a Post</a>
+    </div>
+</div>
+{% endif %}
+<nav class="mt-3 d-flex justify-content-center">
+    <ul class="pagination pagination-sm mb-0">
         <li class="page-item {% if not has_prev %}disabled{% endif %}">
             <a class="page-link" href="{{ url_for('index', q=q, page=page-1) }}">Previous</a>
         </li>

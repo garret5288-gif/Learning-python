@@ -3,11 +3,15 @@ from datetime import datetime
 
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import time
 from urllib.request import urlopen
 from urllib.error import URLError
+import logging
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger('audit')
 
 
 # --- App setup ---
@@ -21,6 +25,12 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = (os.getenv('W16_SECURE_COOKIES') or '').lower() in ('1', 'true', 'yes')
 app.config['EXTERNAL_TIMEOUT_SEC'] = 4
 app.config['EXTERNAL_CACHE_TTL_SEC'] = 120
+app.config['RATE_LIMIT_MAX_PER_MIN'] = 20
+app.config['LOGIN_MAX_FAILS'] = 5
+app.config['LOGIN_LOCKOUT_MIN'] = 15
+# session timeouts
+app.config['SESSION_IDLE_TIMEOUT_MIN'] = int(os.getenv('W16_SESSION_IDLE_MIN', '30'))
+app.config['PERMANENT_SESSION_LIFETIME'] = int(os.getenv('W16_SESSION_ABS_MIN', '1440'))  # minutes
 
 db = SQLAlchemy(app)
 
@@ -28,10 +38,11 @@ db = SQLAlchemy(app)
 # --- Models ---
 class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(80), unique=True, nullable=False)
-	email = db.Column(db.String(120), unique=True, nullable=False)
+	username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+	email = db.Column(db.String(120), unique=True, nullable=False, index=True)
 	password_hash = db.Column(db.String(128), nullable=False)
 	is_admin = db.Column(db.Boolean, default=False, nullable=False)
+	bio = db.Column(db.Text)
 	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 	posts = db.relationship('Post', back_populates='author', cascade='all, delete-orphan')
@@ -43,9 +54,9 @@ class User(db.Model):
 class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-	title = db.Column(db.String(255), nullable=False)
+	title = db.Column(db.String(255), nullable=False, index=True)
 	body = db.Column(db.Text, nullable=False)
-	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
 
 	author = db.relationship('User', back_populates='posts')
 	comments = db.relationship('Comment', back_populates='post', cascade='all, delete-orphan')
@@ -53,10 +64,10 @@ class Post(db.Model):
 
 class Comment(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
-	post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+	post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False, index=True)
 	author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 	body = db.Column(db.Text, nullable=False)
-	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
 
 	post = db.relationship('Post', back_populates='comments')
 	author = db.relationship('User', back_populates='comments')
@@ -82,6 +93,9 @@ with app.app_context():
 		col_names = {row['name'] for row in cols}
 		if 'is_admin' not in col_names:
 			db.session.execute(db.text("ALTER TABLE user ADD COLUMN is_admin INTEGER NOT NULL DEFAULT 0"))
+			db.session.commit()
+		if 'bio' not in col_names:
+			db.session.execute(db.text("ALTER TABLE user ADD COLUMN bio TEXT"))
 			db.session.commit()
 	except Exception:
 		# If PRAGMA/ALTER fails, continue; user table may not exist yet or another issue.
@@ -126,6 +140,50 @@ def fetch_external_items():
 		# Log minimal error to flash; keep last cache if any
 		flash('External feed unavailable.', 'error')
 		return entry['data'] or []
+
+# --- Rate limiting & lockout ---
+_rate_counter = {}
+_login_fails = {}
+
+def _rate_limit(key: str, max_per_min: int = None):
+	max_per_min = max_per_min or app.config['RATE_LIMIT_MAX_PER_MIN']
+	now = int(time.time())
+	bucket = (key, now // 60)
+	_rate_counter[bucket] = _rate_counter.get(bucket, 0) + 1
+	return _rate_counter[bucket] <= max_per_min
+
+def _record_login_failure(username: str, ip: str):
+	now = time.time()
+	rec = _login_fails.get((username.lower(), ip))
+	if rec is None:
+		rec = {'fails': 1, 'locked_until': 0}
+	else:
+		rec['fails'] += 1
+	if rec['fails'] >= app.config['LOGIN_MAX_FAILS']:
+		rec['locked_until'] = now + app.config['LOGIN_LOCKOUT_MIN'] * 60
+	_login_fails[(username.lower(), ip)] = rec
+
+def _is_locked_out(username: str, ip: str):
+	rec = _login_fails.get((username.lower(), ip))
+	if not rec:
+		return False
+	if rec['locked_until'] and rec['locked_until'] > time.time():
+		return True
+	return False
+
+def _reset_login_state(username: str, ip: str):
+	_login_fails.pop((username.lower(), ip), None)
+
+def _validate_password(pw: str):
+	# Basic policy: length >= 8, has lower/upper/digit
+	if len(pw) < 8:
+		return False, 'Password must be at least 8 characters.'
+	has_lower = any(c.islower() for c in pw)
+	has_upper = any(c.isupper() for c in pw)
+	has_digit = any(c.isdigit() for c in pw)
+	if not (has_lower and has_upper and has_digit):
+		return False, 'Password must include upper, lower, and a digit.'
+	return True, ''
 
 
 # --- Helpers ---
@@ -180,9 +238,17 @@ def author_or_admin_required(resource_author_id_getter):
 
 @app.context_processor
 def inject_user_and_csrf():
+	u = current_user()
+	unread = 0
+	if u:
+		try:
+			unread = Message.query.filter_by(recipient_id=u.id, read_at=None).count()
+		except Exception:
+			unread = 0
 	return {
-		'user': current_user(),
+		'user': u,
 		'csrf_token': _csrf_token(),
+		'unread_count': unread,
 	}
 
 
@@ -228,10 +294,18 @@ def register():
 	if request.method == 'POST':
 		if not _require_csrf():
 			return redirect(url_for('register'))
+		# Rate-limit register per IP
+		ip = request.remote_addr or 'unknown'
+		if not _rate_limit(f'register:{ip}'):
+			flash('Too many requests. Please try again later.', 'error')
+			return redirect(url_for('register'))
 		username = (request.form.get('username') or '').strip()
 		email = (request.form.get('email') or '').strip()
 		pw = request.form.get('password') or ''
-		if not username or not email or not pw:
+		ok, msg = _validate_password(pw)
+		if not ok:
+			flash(msg, 'error')
+		elif not username or not email or not pw:
 			flash('All fields required.', 'error')
 		elif User.query.filter(db.func.lower(User.username) == username.lower()).first():
 			flash('Username already taken.', 'error')
@@ -241,6 +315,7 @@ def register():
 			u = User(username=username, email=email, password_hash=generate_password_hash(pw))
 			db.session.add(u)
 			db.session.commit()
+			log.info('register success user=%s ip=%s', username, ip)
 			flash('Registration successful. Please log in.', 'success')
 			return redirect(url_for('login'))
 	return render_template('register.html', title='Register')
@@ -251,14 +326,30 @@ def login():
 	if request.method == 'POST':
 		if not _require_csrf():
 			return redirect(url_for('login'))
+		ip = request.remote_addr or 'unknown'
 		username = (request.form.get('username') or '').strip()
 		pw = request.form.get('password') or ''
+		# Lockout check
+		if _is_locked_out(username, ip):
+			flash('Account temporarily locked due to failed logins. Try again later.', 'error')
+			return redirect(url_for('login'))
+		# Rate-limit per IP
+		if not _rate_limit(f'login:{ip}'):
+			flash('Too many requests. Please try again later.', 'error')
+			return redirect(url_for('login'))
 		u = User.query.filter(db.func.lower(User.username) == username.lower()).first()
 		if not u or not check_password_hash(u.password_hash, pw):
 			flash('Invalid credentials.', 'error')
+			_record_login_failure(username, ip)
+			log.warning('login failed user=%s ip=%s', username, ip)
 		else:
 			session['uid'] = u.id
 			session['uname'] = u.username
+			# mark session as permanent and set last activity
+			session.permanent = True
+			session['last_activity'] = int(time.time())
+			_reset_login_state(username, ip)
+			log.info('login success user=%s ip=%s', username, ip)
 			flash('Logged in.', 'success')
 			return redirect(url_for('index'))
 	return render_template('login.html', title='Login')
@@ -271,6 +362,26 @@ def logout():
 	return redirect(url_for('index'))
 
 
+@app.before_request
+def enforce_idle_timeout():
+	uid = session.get('uid')
+	if not uid:
+		return
+	try:
+		last = int(session.get('last_activity') or 0)
+	except Exception:
+		last = 0
+	now = int(time.time())
+	idle_limit = app.config['SESSION_IDLE_TIMEOUT_MIN'] * 60
+	if last and (now - last) > idle_limit:
+		# idle timeout exceeded
+		session.clear()
+		flash('Session expired due to inactivity. Please log in again.', 'error')
+		return redirect(url_for('login'))
+	# update activity timestamp on each request
+	session['last_activity'] = now
+
+
 # --- Posts & Comments ---
 @app.route('/')
 def index():
@@ -278,7 +389,7 @@ def index():
 	q = (request.args.get('q') or '').strip()
 	page = max(int(request.args.get('page') or 1), 1)
 	per_page = 10
-	query = Post.query
+	query = Post.query.options(joinedload(Post.author))
 	if q:
 		like = f"%{q}%"
 		query = query.filter(db.or_(Post.title.ilike(like), Post.body.ilike(like)))
@@ -335,7 +446,7 @@ def post_view(post_id: int):
 	# comments pagination
 	cpage = max(int(request.args.get('cpage') or 1), 1)
 	c_per_page = 10
-	c_query = Comment.query.filter_by(post_id=p.id)
+	c_query = Comment.query.options(joinedload(Comment.author)).filter_by(post_id=p.id)
 	total_c = c_query.count()
 	comments = c_query.order_by(Comment.created_at.asc()).offset((cpage - 1) * c_per_page).limit(c_per_page).all()
 	has_next_c = cpage * c_per_page < total_c
@@ -357,6 +468,7 @@ def post_delete(post_id: int):
 	# delete post and its comments
 	db.session.delete(p)
 	db.session.commit()
+	log.info('post delete post_id=%s by user_id=%s ip=%s', post_id, u.id, request.remote_addr)
 	flash('Post deleted.', 'success')
 	return redirect(url_for('index'))
 
@@ -406,6 +518,7 @@ def comment_delete(comment_id: int):
 		return redirect(url_for('post_view', post_id=c.post_id))
 	db.session.delete(c)
 	db.session.commit()
+	log.info('comment delete comment_id=%s by user_id=%s ip=%s', comment_id, u.id, request.remote_addr)
 	flash('Comment deleted.', 'success')
 	return redirect(url_for('post_view', post_id=c.post_id))
 
@@ -419,6 +532,25 @@ def user_profile(username: str):
 		return redirect(url_for('index'))
 	posts = Post.query.filter_by(author_id=u.id).order_by(Post.created_at.desc()).limit(10).all()
 	return render_template('user_profile.html', title=f'{u.username} — Profile', u=u, posts=posts)
+
+
+@app.route('/profile/edit', methods=['GET', 'POST'])
+@login_required
+def profile_edit():
+	u = current_user()
+	if request.method == 'POST':
+		if not _require_csrf():
+			return redirect(url_for('profile_edit'))
+		bio = (request.form.get('bio') or '').strip()
+		# Optional: limit bio length to avoid huge blobs
+		if len(bio) > 2000:
+			flash('Bio is too long (max 2000 chars).', 'error')
+			return redirect(url_for('profile_edit'))
+		u.bio = bio or None
+		db.session.commit()
+		flash('Profile updated.', 'success')
+		return redirect(url_for('user_profile', username=u.username))
+	return render_template('profile_edit.html', title='Edit Profile', u=u)
 
 
 @app.route('/messages/<int:msg_id>')
