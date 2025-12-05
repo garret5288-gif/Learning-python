@@ -143,10 +143,7 @@ class ForumTestCase(unittest.TestCase):
         self.assertIn(b'Hi Alice', rv.data)
 
 
-    def test_explore_works(self):
-    # External fetch may fail; page should still render
-        rv = self.client.get('/explore')
-        self.assertEqual(rv.status_code, 200)
+    
 
 
     def test_delete_post_authorization(self):

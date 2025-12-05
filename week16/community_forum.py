@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import time
-from urllib.request import urlopen
+# from urllib.request import urlopen  # removed with Explore feature
 from urllib.error import URLError
 import logging
 from functools import wraps
@@ -24,8 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = (os.getenv('W16_SECURE_COOKIES') or '').lower() in ('1', 'true', 'yes')
-app.config['EXTERNAL_TIMEOUT_SEC'] = 4
-app.config['EXTERNAL_CACHE_TTL_SEC'] = 120
+app.config['EXTERNAL_TIMEOUT_SEC'] = 4  # retained for backward compatibility; unused
 app.config['RATE_LIMIT_MAX_PER_MIN'] = 20
 app.config['LOGIN_MAX_FAILS'] = 5
 app.config['LOGIN_LOCKOUT_MIN'] = 15
@@ -102,57 +101,6 @@ with app.app_context():
 		# If PRAGMA/ALTER fails, continue; user table may not exist yet or another issue.
 		pass
 
-# --- External API cache ---
-_external_cache = {
-	'explore_items': {
-		'updated_at': 0,
-		'data': []
-	}
-}
-
-# shared static fallback for Explore
-_EXPLORE_FALLBACK = [
-	{'id': 1, 'title': 'Welcome to Explore', 'body': 'External feed is unavailable. This is a placeholder item.'},
-	{'id': 2, 'title': 'Sample Post', 'body': 'Try again later to see live content.'},
-]
-
-def fetch_external_items():
-	"""Fetch external items with caching and timeout, return list of dicts."""
-	now = time.time()
-	ttl = app.config['EXTERNAL_CACHE_TTL_SEC']
-	entry = _external_cache['explore_items']
-	if now - entry['updated_at'] < ttl and entry['data']:
-		return entry['data']
-	url = 'https://jsonplaceholder.typicode.com/posts?_limit=10'
-	try:
-		# urllib timeout to avoid hanging
-		with urlopen(url, timeout=app.config['EXTERNAL_TIMEOUT_SEC']) as resp:
-			if resp.status != 200:
-				raise URLError(f'status {resp.status}')
-			payload = resp.read()
-			items = json.loads(payload.decode('utf-8'))
-			# normalize fields
-			normalized = [
-				{
-					'id': it.get('id'),
-					'title': (it.get('title') or '').strip(),
-					'body': (it.get('body') or '').strip()
-				}
-				for it in items
-			]
-			# If the external service returns an empty list, provide a static fallback
-			if not normalized:
-				normalized = _EXPLORE_FALLBACK
-			entry['data'] = normalized
-			entry['updated_at'] = now
-			return normalized
-	except Exception as e:
-		# Log minimal error to flash; keep last cache if any
-			flash('External feed unavailable.', 'error')
-			if entry['data']:
-				return entry['data']
-			# Provide a small static fallback when cache is empty
-			return _EXPLORE_FALLBACK
 
 # --- Small helpers ---
 def _paginate(query, page: int, per_page: int, order_by=None):
@@ -421,10 +369,7 @@ def index():
 	return render_template('index.html', title='Home', posts=posts, q=q, page=page, has_next=has_next, has_prev=has_prev)
 
 
-@app.route('/explore')
-def explore():
-	items = fetch_external_items()
-	return render_template('explore.html', title='Explore', items=items)
+## Explore feature removed
 
 
 @app.route('/post/create', methods=['GET', 'POST'])
