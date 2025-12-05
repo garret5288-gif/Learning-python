@@ -10,12 +10,13 @@ import time
 from urllib.request import urlopen
 from urllib.error import URLError
 import logging
+from functools import wraps
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('audit')
 
 
 # --- App setup ---
-app = Flask(__name__)
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'), static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.secret_key = os.getenv('W16_FORUM_SECRET', 'dev-key-change-me')
 DB_PATH = os.path.join(os.path.dirname(__file__), 'community_forum.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
@@ -109,6 +110,12 @@ _external_cache = {
 	}
 }
 
+# shared static fallback for Explore
+_EXPLORE_FALLBACK = [
+	{'id': 1, 'title': 'Welcome to Explore', 'body': 'External feed is unavailable. This is a placeholder item.'},
+	{'id': 2, 'title': 'Sample Post', 'body': 'Try again later to see live content.'},
+]
+
 def fetch_external_items():
 	"""Fetch external items with caching and timeout, return list of dicts."""
 	now = time.time()
@@ -133,13 +140,30 @@ def fetch_external_items():
 				}
 				for it in items
 			]
+			# If the external service returns an empty list, provide a static fallback
+			if not normalized:
+				normalized = _EXPLORE_FALLBACK
 			entry['data'] = normalized
 			entry['updated_at'] = now
 			return normalized
 	except Exception as e:
 		# Log minimal error to flash; keep last cache if any
-		flash('External feed unavailable.', 'error')
-		return entry['data'] or []
+			flash('External feed unavailable.', 'error')
+			if entry['data']:
+				return entry['data']
+			# Provide a small static fallback when cache is empty
+			return _EXPLORE_FALLBACK
+
+# --- Small helpers ---
+def _paginate(query, page: int, per_page: int, order_by=None):
+	"""Return (items, total, has_next, has_prev) without changing behavior."""
+	total = query.count()
+	if order_by is not None:
+		query = query.order_by(order_by)
+	items = query.offset((page - 1) * per_page).limit(per_page).all()
+	has_next = page * per_page < total
+	has_prev = page > 1
+	return items, total, has_next, has_prev
 
 # --- Rate limiting & lockout ---
 _rate_counter = {}
@@ -195,23 +219,23 @@ def current_user():
 
 
 def login_required(fn):
+	@wraps(fn)
 	def wrapper(*args, **kwargs):
 		if not session.get('uid'):
 			flash('Please log in first.', 'error')
 			return redirect(url_for('login'))
 		return fn(*args, **kwargs)
-	wrapper.__name__ = fn.__name__
 	return wrapper
 
 
 def admin_required(fn):
+	@wraps(fn)
 	def wrapper(*args, **kwargs):
 		u = current_user()
 		if not u or not u.is_admin:
 			flash('Admin access required.', 'error')
 			return redirect(url_for('index'))
 		return fn(*args, **kwargs)
-	wrapper.__name__ = fn.__name__
 	return wrapper
 
 
@@ -221,6 +245,7 @@ def author_or_admin_required(resource_author_id_getter):
 	resource_author_id_getter: callable that returns the author_id for the resource.
 	"""
 	def decorator(fn):
+		@wraps(fn)
 		def wrapper(*args, **kwargs):
 			u = current_user()
 			if not u:
@@ -231,7 +256,6 @@ def author_or_admin_required(resource_author_id_getter):
 				flash('Not authorized.', 'error')
 				return redirect(url_for('index'))
 			return fn(*args, **kwargs)
-		wrapper.__name__ = fn.__name__
 		return wrapper
 	return decorator
 
@@ -393,10 +417,7 @@ def index():
 	if q:
 		like = f"%{q}%"
 		query = query.filter(db.or_(Post.title.ilike(like), Post.body.ilike(like)))
-	total = query.count()
-	posts = query.order_by(Post.created_at.desc()).offset((page - 1) * per_page).limit(per_page).all()
-	has_next = page * per_page < total
-	has_prev = page > 1
+	posts, total, has_next, has_prev = _paginate(query, page, per_page, order_by=Post.created_at.desc())
 	return render_template('index.html', title='Home', posts=posts, q=q, page=page, has_next=has_next, has_prev=has_prev)
 
 
@@ -447,10 +468,7 @@ def post_view(post_id: int):
 	cpage = max(int(request.args.get('cpage') or 1), 1)
 	c_per_page = 10
 	c_query = Comment.query.options(joinedload(Comment.author)).filter_by(post_id=p.id)
-	total_c = c_query.count()
-	comments = c_query.order_by(Comment.created_at.asc()).offset((cpage - 1) * c_per_page).limit(c_per_page).all()
-	has_next_c = cpage * c_per_page < total_c
-	has_prev_c = cpage > 1
+	comments, total_c, has_next_c, has_prev_c = _paginate(c_query, cpage, c_per_page, order_by=Comment.created_at.asc())
 	return render_template('post_view.html', title=p.title, post=p, comments=comments, cpage=cpage, has_next_c=has_next_c, has_prev_c=has_prev_c)
 
 
@@ -576,6 +594,27 @@ def not_found(e):
 @app.errorhandler(500)
 def server_error(e):
 	return render_template('500.html', title='Error'), 500
+
+
+@app.errorhandler(401)
+def unauthorized(e):
+	return render_template('401.html', title='Unauthorized'), 401
+
+
+@app.errorhandler(403)
+def forbidden(e):
+	return render_template('403.html', title='Forbidden'), 403
+
+
+@app.route('/health')
+def health():
+	# Simple health check endpoint
+	try:
+		db.session.execute(db.text('SELECT 1')).scalar()
+		status = 'ok'
+	except Exception:
+		status = 'db-error'
+	return {'status': status}
 
 
 if __name__ == '__main__':

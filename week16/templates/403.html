@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="alert alert-danger">Forbidden. You do not have permission to access this resource.</div>
+<a class="btn btn-primary" href="{{ url_for('index') }}">Back to Home</a>
+{% endblock %}

@@ -10,7 +10,15 @@
                 <p><strong>Sent:</strong> {{ m.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
                 <hr>
                 <p class="message-body">{{ m.body }}</p>
-                <a class="btn btn-outline-secondary" href="{{ url_for('inbox') }}">Back to Inbox</a>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-outline-secondary" href="{{ url_for('inbox') }}">Back to Inbox</a>
+                    {% if user and user.username != m.sender.username %}
+                    <a class="btn btn-primary" href="{{ url_for('message_compose', to=m.sender.username) }}">Reply</a>
+                    {% else %}
+                    <a class="btn btn-primary"
+                        href="{{ url_for('message_compose', to=m.recipient.username) }}">Reply</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

@@ -62,6 +62,8 @@ a {
 :root[data-theme="dark"] a:hover,
 :root[data-theme="dark"] a:focus {
     text-decoration: underline;
+    color: #79c0ff;
+    /* keep bright on hover */
 }
 
 /* Better spacing */
@@ -139,6 +141,28 @@ button.btn-primary {
 :root[data-theme="dark"] .badge.bg-danger {
     background-color: #ff6b6b !important;
     /* brighter red badge in dark mode */
+}
+
+/* Dark-mode hover: keep text readable */
+:root[data-theme="dark"] .list-group-item-action:hover,
+:root[data-theme="dark"] .list-group-item-action:focus {
+    background-color: #242424;
+    color: var(--text);
+    border-color: var(--border);
+}
+
+/* Buttons hover adjustments */
+.btn-primary:hover,
+.btn-primary:focus {
+    filter: brightness(0.95);
+    color: #ffffff;
+}
+
+:root[data-theme="dark"] .btn-outline-secondary:hover,
+:root[data-theme="dark"] .btn-outline-secondary:focus {
+    background-color: var(--card-bg);
+    color: var(--text);
+    border-color: var(--primary);
 }
 
 /* Dark mode: make muted text more legible on profile pages */

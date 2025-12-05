@@ -1,0 +1,64 @@
+Code Walkthrough: Community Forum Flask App
+
+App setup
+File: community_forum.py
+Initializes Flask with explicit template_folder and static_folder.
+Configures SQLite via SQLAlchemy (community_forum.db), secure cookies, CSP headers, CSRF, rate limiting, login lockout, and session idle timeout.
+Lightweight migration ensures User.is_admin and User.bio columns exist.
+Data models
+File: community_forum.py
+User: username, email, password hash, is_admin, bio, timestamps; relationships to posts, comments, messages.
+Post: title, body, author relation, timestamps; related comments.
+Comment: body, author/post relations, timestamps.
+Message: sender, recipient, body, timestamps, read_at.
+Helpers and middleware
+current_user(): resolves the session’s user.
+Decorators: login_required, admin_required, and author_or_admin_required, all using functools.wraps.
+Rate limit + lockout: _rate_limit, _record_login_failure, _is_locked_out, _reset_login_state.
+CSRF: _csrf_token() and _require_csrf() for POST routes.
+@app.before_request: enforces idle session timeout and updates activity.
+@app.after_request: sets security headers (CSP, X-Frame-Options, etc.).
+Context processor: injects user, csrf_token, and unread_count into templates.
+Routes: auth
+GET/POST /register: validates and creates User with password policy.
+GET/POST /login: rate-limited; lockout on repeated failures; sets session.
+GET /logout: clears session.
+Routes: posts and comments
+GET /: index with search and pagination (uses _paginate helper); eager loads authors.
+GET/POST /post/create: create a post (CSRF-protected).
+GET/POST /post/<id>: view post; add comments; comments paginated.
+POST /post/<id>/delete: author or admin can delete.
+POST /comment/<id>/delete: comment author or admin can delete.
+Routes: messaging
+GET /messages: inbox lists received messages; unread count shown in navbar.
+GET/POST /messages/compose: compose message; to query param pre-fills recipient.
+GET /messages/<id>: message detail; marks read when recipient views; includes Reply button pre-filling the counterpart user.
+Routes: profiles
+GET /user/<username>: public profile page; shows recent posts and bio.
+GET/POST /profile/edit: edit bio (CSRF, length limit).
+Explore feed
+GET /explore: displays external items.
+fetch_external_items(): fetches with timeout, caches with TTL, and uses a static fallback (_EXPLORE_FALLBACK) when offline or empty.
+Health and errors
+GET /health: simple DB probe endpoint.
+Error pages: 401, 403, 404, 500 render respective templates.
+Templates (selected)
+Folder: templates
+base.html: navbar, unread badge, dark mode toggle, alerts.
+index.html: posts list, search, pagination.
+post_view.html: post details, comments list, pagination controls.
+inbox.html: message list; improved dark-mode contrast.
+compose.html: send a message.
+message.html: message detail with Reply button.
+user_profile.html: profile page with bio, actions.
+profile_edit.html: bio edit form.
+explore.html: card grid of external items; warning when empty.
+401.html, 403.html, 404.html, 500.html: error templates.
+Static assets
+Folder: static
+app.css: dark mode variables, readable hover states, buttons, badges, message styles.
+theme.js: CSP-safe dark mode toggle (localStorage).
+Tests
+File: test_community_forum.py
+Uses Flask test client; covers auth, posts/comments, messaging, profiles, explore, delete authorization, and health endpoint.
+App is set to testing mode to simplify CSRF in tests.

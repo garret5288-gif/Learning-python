@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="alert alert-danger">Unauthorized. Please log in.</div>
+<a class="btn btn-primary" href="{{ url_for('login') }}">Go to Login</a>
+{% endblock %}

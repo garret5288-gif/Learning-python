@@ -1,0 +1,19 @@
+problem statement
+Community members need a simple, secure place to share posts, discuss via comments, and exchange direct messages. Common pain points include poor usability in dark mode, lack of notifications for new messages, difficulty replying, and unreliable external content discovery. Security concerns (CSRF, session management, authorization) must be addressed without degrading user experience.
+
+Solution approach (what the app offers)
+Accounts and authentication
+User registration and login with password policy, lockout on repeated failures, and idle session timeout.
+Content and discussion
+Create, view, search, and paginate posts; add and delete comments with author/admin authorization.
+Messaging with notifications
+Private inbox, unread message badge in the navbar, message detail view with a Reply button that pre-fills the recipient.
+User profiles
+Public profile pages with “member since” and editable bio; author links to profiles.
+Explore feed
+External content fetch with timeouts and caching; static fallback ensures Explore always displays items even offline.
+Secure by default
+CSRF protection, CSP headers, secure cookies, 401/403/404/500 error pages, and a health endpoint.
+Accessible, readable UI
+Dark mode with high-contrast styles for titles, buttons, links, lists, and hover states; consistent Bootstrap-based layout.
+Together, this delivers a practical, secure community forum where users can post, discuss, and message smoothly—with reliable content discovery and strong protections.
